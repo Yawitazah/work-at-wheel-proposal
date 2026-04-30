@@ -1,0 +1,2342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Work @ Wheel x Zah Brand Solutions Proposal</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #66707d;
+      --paper: #fffdf8;
+      --line: #d9dfdd;
+      --green: #1d8f6f;
+      --teal: #22a6b3;
+      --coral: #f05d5e;
+      --gold: #f4b942;
+      --blue: #3c6df0;
+      --charcoal: #263238;
+      --shadow: 0 18px 42px rgba(23, 32, 42, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      color-scheme: light;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(244,185,66,0.16), rgba(34,166,179,0) 30%),
+        linear-gradient(315deg, rgba(240,93,94,0.12), rgba(29,143,111,0) 32%),
+        var(--paper);
+    }
+
+    a { color: inherit; }
+
+    .progress {
+      position: fixed;
+      inset: 0 0 auto;
+      height: 5px;
+      z-index: 20;
+      background: linear-gradient(90deg, var(--green), var(--teal), var(--gold), var(--coral));
+      transform-origin: left;
+      transform: scaleX(0);
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      background: rgba(255, 253, 248, 0.82);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(38, 50, 56, 0.1);
+    }
+
+    .nav a {
+      padding: 9px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 750;
+      color: var(--muted);
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      color: var(--ink);
+      background: rgba(29, 143, 111, 0.12);
+    }
+
+    .editor-toolbar {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 30;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      max-width: min(620px, calc(100vw - 32px));
+      padding: 10px;
+      border: 1px solid rgba(38, 50, 56, 0.14);
+      border-radius: 8px;
+      background: rgba(255, 253, 248, 0.92);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .editor-toolbar.hidden {
+      display: none;
+    }
+
+    .editor-toggle {
+      position: fixed;
+      right: 0;
+      bottom: 22px;
+      z-index: 31;
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 42px;
+      padding: 0;
+      border: 1px solid rgba(38, 50, 56, 0.18);
+      border-right: 0;
+      border-radius: 8px 0 0 8px;
+      background: rgba(255, 253, 248, 0.76);
+      color: var(--muted);
+      box-shadow: 0 8px 22px rgba(23, 32, 42, 0.1);
+      font: inherit;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      opacity: 0.5;
+      backdrop-filter: blur(12px);
+      transition: opacity 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .editor-toggle:hover {
+      opacity: 1;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .editor-toolbar button,
+    .editor-toolbar select,
+    .editor-toolbar input {
+      min-height: 36px;
+      border: 1px solid rgba(38, 50, 56, 0.18);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .editor-toolbar button {
+      padding: 0 12px;
+      cursor: pointer;
+    }
+
+    .editor-toolbar button:hover {
+      background: rgba(29, 143, 111, 0.1);
+    }
+
+    .editor-toolbar select {
+      padding: 0 8px;
+    }
+
+    .editor-toolbar input[type="color"] {
+      width: 42px;
+      padding: 4px;
+      cursor: pointer;
+    }
+
+    .size-control {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .size-control button {
+      width: 36px;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .size-control input[type="number"] {
+      width: 66px;
+      padding: 0 8px;
+    }
+
+    .save-status {
+      min-width: 74px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    [contenteditable="true"] {
+      cursor: text;
+      border-radius: 5px;
+      outline: 1px dashed transparent;
+      outline-offset: 4px;
+    }
+
+    [contenteditable="true"]:hover {
+      outline-color: rgba(29, 143, 111, 0.24);
+    }
+
+    [contenteditable="true"]:focus {
+      outline-color: var(--green);
+      background: rgba(255, 255, 255, 0.46);
+    }
+
+    .section {
+      position: relative;
+      min-height: 100vh;
+      padding: 84px clamp(20px, 5vw, 72px);
+      display: grid;
+      align-items: center;
+      border-bottom: 1px solid rgba(38, 50, 56, 0.12);
+      overflow: hidden;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .section.gear-field::before,
+    .section.gear-field::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      width: var(--gear-size, 360px);
+      aspect-ratio: 1;
+      background: var(--gear-color, var(--charcoal));
+      opacity: 0.08;
+      pointer-events: none;
+      transform: rotate(var(--gear-rotate, 0deg));
+      clip-path: polygon(50% 0%, 57% 12%, 68% 5%, 74% 18%, 88% 15%, 88% 30%, 100% 37%, 91% 50%, 100% 63%, 88% 70%, 88% 85%, 74% 82%, 68% 95%, 57% 88%, 50% 100%, 43% 88%, 32% 95%, 26% 82%, 12% 85%, 12% 70%, 0% 63%, 9% 50%, 0% 37%, 12% 30%, 12% 15%, 26% 18%, 32% 5%, 43% 12%);
+      mask: radial-gradient(circle, transparent 0 28%, #000 29% 100%);
+      -webkit-mask: radial-gradient(circle, transparent 0 28%, #000 29% 100%);
+    }
+
+    .section.gear-field::before {
+      right: -110px;
+      top: 12%;
+    }
+
+    .section.gear-field::after {
+      left: -130px;
+      bottom: 8%;
+      width: calc(var(--gear-size, 360px) * 0.62);
+      --gear-rotate: 18deg;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 18px;
+      color: var(--green);
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      font-size: 13px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 3px;
+      background: var(--green);
+      border-radius: 99px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p { margin-top: 0; }
+
+    h1 {
+      max-width: 980px;
+      font-size: clamp(46px, 8vw, 104px);
+      line-height: 0.94;
+      letter-spacing: 0;
+      margin-bottom: 26px;
+    }
+
+    h2 {
+      font-size: clamp(34px, 5vw, 66px);
+      line-height: 1;
+      letter-spacing: 0;
+      margin-bottom: 22px;
+    }
+
+    h3 {
+      font-size: 22px;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .lead {
+      max-width: 760px;
+      font-size: clamp(18px, 2vw, 24px);
+      line-height: 1.42;
+      color: #3e4954;
+      margin-bottom: 30px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(255,253,248,0.94) 0%, rgba(255,253,248,0.8) 44%, rgba(255,253,248,0.2) 100%),
+        var(--paper);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='1600' height='1000' viewBox='0 0 1600 1000' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1600' height='1000' fill='%23f7f1e4'/%3E%3Cg opacity='.88'%3E%3Crect x='910' y='112' width='430' height='290' rx='18' fill='%2322a6b3'/%3E%3Crect x='1010' y='177' width='250' height='26' rx='13' fill='%23fffdf8'/%3E%3Crect x='1010' y='226' width='180' height='22' rx='11' fill='%23fffdf8' opacity='.75'/%3E%3Ccircle cx='945' cy='195' r='34' fill='%23f4b942'/%3E%3Cpath d='M954 283c47-28 103-28 160 0 64 31 128 29 188-6v125H954V283Z' fill='%231d8f6f'/%3E%3Crect x='725' y='460' width='350' height='250' rx='18' fill='%2317202a'/%3E%3Crect x='765' y='506' width='270' height='26' rx='13' fill='%23fffdf8' opacity='.95'/%3E%3Crect x='765' y='555' width='178' height='22' rx='11' fill='%23fffdf8' opacity='.68'/%3E%3Crect x='765' y='610' width='90' height='54' rx='12' fill='%23f05d5e'/%3E%3Crect x='875' y='610' width='90' height='54' rx='12' fill='%23f4b942'/%3E%3Crect x='985' y='610' width='50' height='54' rx='12' fill='%2322a6b3'/%3E%3Crect x='1132' y='495' width='270' height='360' rx='18' fill='%23fffdf8' stroke='%2317202a' stroke-width='8'/%3E%3Ccircle cx='1267' cy='621' r='72' fill='%23f05d5e'/%3E%3Cpath d='M1240 576v90l76-45-76-45Z' fill='%23fffdf8'/%3E%3Crect x='1176' y='732' width='180' height='20' rx='10' fill='%2317202a' opacity='.75'/%3E%3Crect x='1196' y='775' width='140' height='16' rx='8' fill='%2317202a' opacity='.35'/%3E%3C/g%3E%3C/svg%3E") center / cover no-repeat;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+
+    .hero .wrap {
+      position: relative;
+      z-index: 1;
+      padding-bottom: 12vh;
+    }
+
+    .brand-logo {
+      display: block;
+      width: min(260px, 52vw);
+      height: auto;
+      margin-bottom: 24px;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      filter: drop-shadow(0 12px 24px rgba(23, 32, 42, 0.08));
+    }
+
+    .brand-logo.dragging { cursor: grabbing; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 8px 13px;
+      border: 1px solid rgba(38, 50, 56, 0.16);
+      border-radius: 999px;
+      background: rgba(255, 253, 248, 0.72);
+      font-weight: 750;
+      font-size: 13px;
+      color: #36424d;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.82fr);
+      gap: clamp(32px, 6vw, 82px);
+      align-items: center;
+    }
+
+    .panel {
+      border: 1px solid rgba(38, 50, 56, 0.14);
+      border-radius: 8px;
+      background: rgba(255, 253, 248, 0.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      min-height: 54px;
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(38, 50, 56, 0.12);
+      background: rgba(255, 255, 255, 0.54);
+      font-weight: 850;
+    }
+
+    .panel-body { padding: clamp(18px, 3vw, 30px); }
+
+    .model {
+      display: grid;
+      gap: 14px;
+    }
+
+    .model-row {
+      display: grid;
+      grid-template-columns: 74px 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 16px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(38, 50, 56, 0.1);
+    }
+
+    .model-icon {
+      display: grid;
+      place-items: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      color: #fff;
+      font-weight: 900;
+      font-size: 24px;
+      background: var(--green);
+    }
+
+    .model-row:nth-child(2) .model-icon { background: var(--coral); }
+
+    .model-title {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .model-note {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .model-arrow {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--green);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .stat {
+      padding: 20px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(38, 50, 56, 0.1);
+    }
+
+    .stat b {
+      display: block;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1;
+      color: var(--green);
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-weight: 750;
+      font-size: 14px;
+    }
+
+    .system-map {
+      position: relative;
+      min-height: 620px;
+      display: grid;
+      place-items: center;
+    }
+
+    .node {
+      position: absolute;
+      width: clamp(138px, 15vw, 180px);
+      min-height: 112px;
+      display: grid;
+      align-content: center;
+      gap: 8px;
+      padding: 18px;
+      border-radius: 8px;
+      color: #fff;
+      box-shadow: var(--shadow);
+      transform: translate(-50%, -50%);
+    }
+
+    .node strong {
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .node span {
+      opacity: 0.86;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .center-node {
+      left: 50%;
+      top: 50%;
+      width: clamp(180px, 21vw, 240px);
+      min-height: 150px;
+      background: var(--charcoal);
+      text-align: center;
+      z-index: 2;
+    }
+
+    .n1 { left: 50%; top: 16%; background: var(--teal); }
+    .n2 { left: 82%; top: 34%; background: var(--green); }
+    .n3 { left: 77%; top: 74%; background: var(--coral); }
+    .n4 { left: 23%; top: 74%; background: var(--blue); }
+    .n5 { left: 18%; top: 34%; background: var(--gold); color: var(--ink); }
+
+    .map-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .map-lines path {
+      fill: none;
+      stroke: rgba(23, 32, 42, 0.28);
+      stroke-width: 3;
+      stroke-dasharray: 9 10;
+      animation: dash 14s linear infinite;
+    }
+
+    @keyframes dash {
+      to { stroke-dashoffset: -240; }
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .phase {
+      position: relative;
+      min-height: 250px;
+      padding: 18px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(38, 50, 56, 0.12);
+      overflow: hidden;
+    }
+
+    .phase::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 8px;
+      background: var(--phase, var(--green));
+    }
+
+    .phase b {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .phase strong {
+      display: block;
+      font-size: 19px;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .phase p {
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .chart {
+      width: 100%;
+      min-height: 390px;
+    }
+
+    .bar {
+      transform-origin: bottom;
+      transform-box: fill-box;
+      transform: scaleY(0.08);
+      transition: transform 900ms cubic-bezier(.2,.8,.2,1);
+    }
+
+    .in-view .bar { transform: scaleY(1); }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 6px;
+      background: var(--swatch);
+    }
+
+    .calculator {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    label {
+      display: grid;
+      gap: 10px;
+      padding: 18px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(38, 50, 56, 0.1);
+      font-weight: 850;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.4;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--green);
+    }
+
+    .value {
+      color: var(--green);
+      font-size: 22px;
+      font-weight: 950;
+    }
+
+    .result {
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      padding: 28px;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--charcoal);
+      box-shadow: var(--shadow);
+    }
+
+    .result-number {
+      font-size: clamp(42px, 7vw, 76px);
+      line-height: 0.95;
+      font-weight: 950;
+    }
+
+    .result small {
+      color: rgba(255,255,255,0.72);
+      font-weight: 750;
+      line-height: 1.5;
+    }
+
+    .result-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .result-metric {
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .result-metric span {
+      display: block;
+      color: rgba(255,255,255,0.68);
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .result-metric b {
+      display: block;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 32px;
+    }
+
+    .service {
+      min-height: 210px;
+      padding: 18px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(38, 50, 56, 0.12);
+    }
+
+    .service-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      margin-bottom: 18px;
+      color: #fff;
+      font-weight: 950;
+      background: var(--c, var(--green));
+    }
+
+    .service p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      margin-bottom: 0;
+    }
+
+    .podcast-flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .podcast-business {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
+      gap: 20px;
+      align-items: start;
+      margin-top: 30px;
+    }
+
+    .podcast-services {
+      display: grid;
+      gap: 10px;
+    }
+
+    .podcast-service {
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr) 96px;
+      gap: 12px;
+      align-items: center;
+      padding: 13px;
+      border: 1px solid rgba(38, 50, 56, 0.12);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .podcast-service input[type="radio"] {
+      accent-color: var(--green);
+    }
+
+    .podcast-service strong {
+      display: block;
+      line-height: 1.2;
+      font-size: 14px;
+    }
+
+    .podcast-service span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .rate-input {
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid rgba(38, 50, 56, 0.16);
+      border-radius: 7px;
+      padding: 0 8px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 850;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .podcast-summary {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .formula {
+      color: rgba(255,255,255,0.74);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .fee-share-control {
+      display: grid;
+      gap: 8px;
+      margin-top: 4px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(38, 50, 56, 0.1);
+    }
+
+    .fee-share-control span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .flow-step {
+      position: relative;
+      padding: 20px;
+      min-height: 170px;
+      color: #fff;
+      background: var(--charcoal);
+      border-radius: 8px;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: ">";
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--ink);
+      font-weight: 950;
+      transform: translateY(-50%);
+      z-index: 2;
+    }
+
+    .flow-step b {
+      display: block;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .flow-step p {
+      color: rgba(255,255,255,0.75);
+      line-height: 1.45;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .commitments {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .commitment {
+      padding: 24px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(38, 50, 56, 0.12);
+      min-height: 280px;
+    }
+
+    .commitment.featured {
+      background: var(--charcoal);
+      color: #fff;
+      transform: translateY(-12px);
+    }
+
+    .commitment .price {
+      margin: 18px 0;
+      font-size: 42px;
+      font-weight: 950;
+      color: var(--green);
+    }
+
+    .commitment.featured .price { color: var(--gold); }
+
+    .commitment p {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .commitment.featured p { color: rgba(255,255,255,0.75); }
+
+    .scope-boundary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    .scope-panel {
+      padding: 22px;
+      border-radius: 8px;
+      border: 1px solid rgba(38, 50, 56, 0.12);
+      background: #fff;
+    }
+
+    .scope-panel.highlight {
+      color: #fff;
+      background: var(--charcoal);
+      box-shadow: var(--shadow);
+    }
+
+    .scope-panel h3 {
+      margin-bottom: 16px;
+    }
+
+    .scope-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .scope-list li {
+      position: relative;
+      padding-left: 20px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .scope-panel.highlight .scope-list li {
+      color: rgba(255,255,255,0.78);
+    }
+
+    .scope-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.62em;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .scope-panel.highlight .scope-list li::before {
+      background: var(--gold);
+    }
+
+    .small-print {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 8px;
+      color: #55616d;
+      background: rgba(255,255,255,0.68);
+      border: 1px solid rgba(38, 50, 56, 0.1);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .close-box {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: center;
+      padding: clamp(22px, 4vw, 42px);
+      border-radius: 8px;
+      background: var(--charcoal);
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .close-box p {
+      margin: 0;
+      color: rgba(255,255,255,0.75);
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .outcome-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .outcome-topline {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: center;
+      margin-top: 28px;
+    }
+
+    .profit-box {
+      padding: clamp(24px, 4vw, 38px);
+      border-radius: 8px;
+      color: #fff;
+      background: var(--charcoal);
+      box-shadow: var(--shadow);
+    }
+
+    .profit-box span {
+      display: block;
+      color: rgba(255,255,255,0.72);
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .profit-box b {
+      display: block;
+      margin-top: 12px;
+      font-size: clamp(46px, 8vw, 96px);
+      line-height: 0.95;
+      color: var(--gold);
+    }
+
+    .period-toggle {
+      display: inline-flex;
+      padding: 4px;
+      border: 1px solid rgba(38, 50, 56, 0.14);
+      border-radius: 999px;
+      background: #fff;
+    }
+
+    .period-toggle button {
+      min-height: 38px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .period-toggle button.active {
+      color: #fff;
+      background: var(--green);
+    }
+
+    .outcome-card {
+      padding: 18px;
+      border-radius: 8px;
+      border: 1px solid rgba(38, 50, 56, 0.12);
+      background: #fff;
+    }
+
+    .outcome-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .outcome-card b {
+      display: block;
+      margin-top: 10px;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1;
+      color: var(--green);
+    }
+
+    .outcome-card.expense b {
+      color: var(--coral);
+    }
+
+    .outcome-card.gross b {
+      color: var(--blue);
+    }
+
+    .exclusions {
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 8px;
+      color: #394651;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(38, 50, 56, 0.12);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .revenue-accordion {
+      margin-top: 16px;
+      border: 1px solid rgba(38, 50, 56, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.82);
+      overflow: hidden;
+    }
+
+    .revenue-accordion summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 18px 20px;
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 950;
+      list-style: none;
+    }
+
+    .revenue-accordion summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .revenue-accordion summary::after {
+      content: "+";
+      display: grid;
+      place-items: center;
+      flex: 0 0 30px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--green);
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .revenue-accordion[open] summary::after {
+      content: "-";
+    }
+
+    .revenue-detail {
+      display: grid;
+      gap: 18px;
+      padding: 0 20px 20px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .detail-card {
+      padding: 16px;
+      border: 1px solid rgba(38, 50, 56, 0.1);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .detail-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .detail-card b {
+      display: block;
+      margin-top: 8px;
+      color: var(--ink);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .detail-list {
+      margin: 0;
+      padding-left: 18px;
+      color: #394651;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 20px;
+      border-radius: 999px;
+      background: var(--gold);
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+
+    .in-view .fade-up,
+    .fade-up.in-view {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 980px) {
+      .nav { overflow-x: auto; justify-content: flex-start; }
+      .split,
+      .calculator,
+      .close-box { grid-template-columns: 1fr; }
+      .timeline,
+      .services,
+      .podcast-flow,
+      .podcast-business,
+      .commitments,
+      .scope-boundary,
+      .stat-grid,
+      .outcome-grid { grid-template-columns: 1fr 1fr; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
+      .outcome-topline { grid-template-columns: 1fr; }
+      .calculator,
+      .controls,
+      .podcast-business { grid-template-columns: 1fr; }
+      .system-map { min-height: 720px; }
+      .n1 { top: 10%; }
+      .n2 { left: 75%; top: 34%; }
+      .n3 { left: 70%; top: 82%; }
+      .n4 { left: 30%; top: 82%; }
+      .n5 { left: 25%; top: 34%; }
+      .flow-step:not(:last-child)::after { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .section { padding: 64px 16px; }
+      .editor-toolbar {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+      }
+      .editor-toggle {
+        right: 0;
+        bottom: 18px;
+      }
+      .hero .wrap { padding-bottom: 4vh; }
+      .timeline,
+      .services,
+      .podcast-flow,
+      .podcast-business,
+      .commitments,
+      .scope-boundary,
+      .stat-grid,
+      .outcome-grid { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .podcast-service {
+        grid-template-columns: 22px minmax(0, 1fr);
+      }
+      .rate-input {
+        grid-column: 2;
+      }
+      .system-map {
+        display: grid;
+        gap: 14px;
+        min-height: auto;
+      }
+      .map-lines { display: none; }
+      .node,
+      .center-node {
+        position: static;
+        transform: none;
+        width: 100%;
+      }
+      .center-node { order: -1; }
+      .model-row { grid-template-columns: 56px 1fr; }
+      .model-arrow { display: none; }
+      .chart { min-height: 300px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+
+  <div class="editor-toolbar hidden" aria-label="Text editing controls">
+    <button type="button" id="saveEdits">Save</button>
+    <button type="button" id="undoEdit">Undo</button>
+    <button type="button" id="resetEdits">Reset</button>
+    <input type="color" id="textColor" value="#17202a" title="Text color" aria-label="Text color">
+    <div class="size-control" aria-label="Text size controls">
+      <button type="button" id="decreaseSize" title="Decrease text size" aria-label="Decrease text size">-</button>
+      <input type="number" id="textSize" min="8" max="140" step="1" placeholder="px" aria-label="Text size in pixels">
+      <button type="button" id="increaseSize" title="Increase text size" aria-label="Increase text size">+</button>
+    </div>
+    <span class="save-status" id="saveStatus">Editable</span>
+  </div>
+  <button type="button" class="editor-toggle" id="toggleEditor" title="Show editor" aria-label="Show editor">✎</button>
+
+  <nav class="nav" aria-label="Proposal sections">
+    <a href="#overview">Overview</a>
+    <a href="#model">Model</a>
+    <a href="#system">System</a>
+    <a href="#growth">Growth</a>
+    <a href="#services">Services</a>
+    <a href="#podcast">Podcast</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#terms">Terms</a>
+  </nav>
+
+  <main>
+    <section class="section hero gear-field" id="overview" style="--gear-size: 420px; --gear-color: var(--coral);">
+      <div class="wrap">
+        <img class="brand-logo fade-up" id="zahLogo" src="zah-logo.png" alt="Zah Brand Solutions logo">
+        <p class="eyebrow fade-up">Marketing Department + White-Labeled Services Proposal</p>
+        <h1 class="fade-up">Work @ Wheel x Zah Brand Solutions</h1>
+        <p class="lead fade-up">A centralized growth system that turns Work @ Wheel from a coworking destination into a business growth platform with in-house marketing, media, member monetization, and scalable service revenue.</p>
+        <div class="chips fade-up">
+          <span class="chip">Prepared for Derek Vitatoe & Broyny Vitatoe</span>
+          <span class="chip">$3,500 monthly retainer</span>
+          <span class="chip">Director of Marketing & Growth</span>
+          <span class="chip">Prototype system included</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gear-field" id="model" style="--gear-size: 300px; --gear-color: var(--green);">
+      <div class="wrap split">
+        <div>
+          <p class="eyebrow fade-up">Business Model Shift</p>
+          <h2 class="fade-up">From space revenue to a layered growth engine.</h2>
+          <p class="lead fade-up">The retainer creates the operating infrastructure. The upside comes from content, member demand, and white-labeled services that turn existing foot traffic into recurring business value.</p>
+          <div class="stat-grid fade-up">
+            <div class="stat"><b>2x</b><span>Revenue layers</span></div>
+            <div class="stat"><b>6</b><span>Service categories</span></div>
+            <div class="stat"><b>6 mo</b><span>Scale pathway</span></div>
+          </div>
+        </div>
+        <div class="panel fade-up">
+          <div class="panel-head">Dual-Layer Revenue Model <span>01</span></div>
+          <div class="panel-body model">
+            <div class="model-row">
+              <div class="model-icon">S</div>
+              <div>
+                <div class="model-title">Space Revenue</div>
+                <div class="model-note">Memberships, rooms, events, occupancy growth</div>
+              </div>
+              <div class="model-arrow">+</div>
+            </div>
+            <div class="model-row">
+              <div class="model-icon">M</div>
+              <div>
+                <div class="model-title">Service + Media Revenue</div>
+                <div class="model-note">Websites, branding, content, funnels, AI training, podcast packages</div>
+              </div>
+              <div class="model-arrow">=</div>
+            </div>
+            <div class="model-row">
+              <div class="model-icon" style="background: var(--gold); color: var(--ink);">G</div>
+              <div>
+                <div class="model-title">Business Growth Platform</div>
+                <div class="model-note">A stronger brand, higher retention, and new profit centers</div>
+              </div>
+              <div class="model-arrow">↑</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gear-field" id="system" style="--gear-size: 380px; --gear-color: var(--teal);">
+      <div class="wrap">
+        <p class="eyebrow fade-up">Operating System</p>
+        <h2 class="fade-up">One marketing department connecting every growth lever.</h2>
+        <p class="lead fade-up">Zah Brand Solutions leads the strategy, contractors, KPIs, member-facing offers, and content workflows so the ecosystem moves as one system.</p>
+        <div class="system-map fade-up" aria-label="Marketing ecosystem map">
+          <svg class="map-lines" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M500 310 L500 90 M500 310 L820 210 M500 310 L770 500 M500 310 L230 500 M500 310 L180 210" />
+          </svg>
+          <div class="node center-node"><strong>Marketing Department</strong><span>Strategy, reporting, vendors, budget, execution rhythm</span></div>
+          <div class="node n1"><strong>Podcast Ecosystem</strong><span>Shows, hosts, clips, distribution, monetization</span></div>
+          <div class="node n2"><strong>Brand Ambassadors</strong><span>Member voices, affiliates, referrals, local proof</span></div>
+          <div class="node n3"><strong>White-Labeled Services</strong><span>Premium add-ons delivered under the Work @ Wheel brand</span></div>
+          <div class="node n4"><strong>Member Growth</strong><span>Retention, visibility, business support, upsell paths</span></div>
+          <div class="node n5"><strong>Local Marketing</strong><span>Events, partnerships, print, community presence</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gear-field" id="growth" style="--gear-size: 330px; --gear-color: var(--coral);">
+      <div class="wrap split">
+        <div>
+          <p class="eyebrow fade-up">Benefit Visual</p>
+          <h2 class="fade-up">A compounding funnel, not one-off marketing.</h2>
+          <p class="lead fade-up">Content increases awareness. Ambassadors increase trust. Services increase revenue per member. Reporting turns the system into a repeatable machine.</p>
+          <div class="panel fade-up">
+            <div class="panel-head">Projected Growth Mix <span>Illustrative</span></div>
+            <div class="panel-body">
+              <svg class="chart" viewBox="0 0 760 420" role="img" aria-label="Illustrative growth chart showing increasing contribution from occupancy, services, and media">
+                <line x1="74" y1="350" x2="710" y2="350" stroke="#aeb7b4" />
+                <line x1="74" y1="72" x2="74" y2="350" stroke="#aeb7b4" />
+                <g fill="#66707d" font-size="14" font-weight="700">
+                  <text x="92" y="382">M1</text><text x="196" y="382">M2</text><text x="300" y="382">M3</text>
+                  <text x="404" y="382">M4</text><text x="508" y="382">M5</text><text x="612" y="382">M6</text>
+                </g>
+                <g>
+                  <rect class="bar" x="90" y="210" width="38" height="140" fill="#1d8f6f" />
+                  <rect class="bar" x="130" y="276" width="38" height="74" fill="#f05d5e" />
+                  <rect class="bar" x="170" y="318" width="38" height="32" fill="#f4b942" />
+
+                  <rect class="bar" x="194" y="190" width="38" height="160" fill="#1d8f6f" />
+                  <rect class="bar" x="234" y="254" width="38" height="96" fill="#f05d5e" />
+                  <rect class="bar" x="274" y="304" width="38" height="46" fill="#f4b942" />
+
+                  <rect class="bar" x="298" y="168" width="38" height="182" fill="#1d8f6f" />
+                  <rect class="bar" x="338" y="226" width="38" height="124" fill="#f05d5e" />
+                  <rect class="bar" x="378" y="286" width="38" height="64" fill="#f4b942" />
+
+                  <rect class="bar" x="402" y="150" width="38" height="200" fill="#1d8f6f" />
+                  <rect class="bar" x="442" y="198" width="38" height="152" fill="#f05d5e" />
+                  <rect class="bar" x="482" y="262" width="38" height="88" fill="#f4b942" />
+
+                  <rect class="bar" x="506" y="132" width="38" height="218" fill="#1d8f6f" />
+                  <rect class="bar" x="546" y="174" width="38" height="176" fill="#f05d5e" />
+                  <rect class="bar" x="586" y="238" width="38" height="112" fill="#f4b942" />
+
+                  <rect class="bar" x="610" y="112" width="38" height="238" fill="#1d8f6f" />
+                  <rect class="bar" x="650" y="148" width="38" height="202" fill="#f05d5e" />
+                  <rect class="bar" x="690" y="210" width="38" height="140" fill="#f4b942" />
+                </g>
+              </svg>
+              <div class="legend">
+                <span style="--swatch: var(--green)">Occupancy + retention</span>
+                <span style="--swatch: var(--coral)">Member services</span>
+                <span style="--swatch: var(--gold)">Media + podcast offers</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel fade-up">
+          <div class="panel-head">Service Revenue Calculator <span>Interactive</span></div>
+          <div class="panel-body calculator">
+            <div class="controls">
+              <label>
+                Active members
+                <input id="members" type="range" min="20" max="160" value="75">
+                <span class="value" id="membersValue">75</span>
+                <span class="hint">The number of Work @ Wheel members who could be offered in-house marketing services.</span>
+              </label>
+              <label>
+                Monthly service attachment
+                <input id="attach" type="range" min="3" max="35" value="12">
+                <span class="value" id="attachValue">12%</span>
+                <span class="hint">The percentage of members who purchase a website, branding, content, funnel, AI training, or strategy package in a month.</span>
+              </label>
+              <label>
+                Average service package
+                <input id="package" type="range" min="300" max="2500" step="50" value="850">
+                <span class="value" id="packageValue">$850</span>
+                <span class="hint">The average sale price of one white-labeled marketing service package.</span>
+              </label>
+              <label>
+                Work @ Wheel revenue share
+                <input id="share" type="range" min="10" max="50" step="5" value="30">
+                <span class="value" id="shareValue">30%</span>
+                <span class="hint">The portion Work @ Wheel keeps for originating the client and selling the service under its brand.</span>
+              </label>
+            </div>
+            <div class="result">
+              <small>Illustrative monthly Work @ Wheel service revenue</small>
+              <div class="result-number" id="result">$2,295</div>
+              <div class="result-metrics">
+                <div class="result-metric">
+                  <span>Gross service sales</span>
+                  <b id="grossResult">$7,650</b>
+                </div>
+                <div class="result-metric">
+                  <span>Zah fulfillment side</span>
+                  <b id="zahResult">$5,355</b>
+                </div>
+              </div>
+              <small>This is a planning model, not a guarantee. It shows how member demand could convert into gross service sales, then estimates Work @ Wheel's share based on the selected percentage.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gear-field" id="services" style="--gear-size: 360px; --gear-color: var(--blue);">
+      <div class="wrap">
+        <p class="eyebrow fade-up">White-Labeled Offers</p>
+        <h2 class="fade-up">Premium services members can buy without leaving the ecosystem.</h2>
+        <p class="lead fade-up">Work @ Wheel becomes the front door for marketing services. Zah Brand Solutions powers fulfillment, systems, and strategy behind the scenes.</p>
+        <div class="services fade-up">
+          <div class="service"><div class="service-icon" style="--c: var(--green)">W</div><h3>Websites</h3><p>Design, development, landing pages, and member business sites.</p></div>
+          <div class="service"><div class="service-icon" style="--c: var(--coral)">B</div><h3>Branding</h3><p>Logos, identity systems, business cards, labels, and launch assets.</p></div>
+          <div class="service"><div class="service-icon" style="--c: var(--teal)">C</div><h3>Content</h3><p>Video, social content, AI-assisted assets, and repeatable posting frameworks.</p></div>
+          <div class="service"><div class="service-icon" style="--c: var(--blue)">S</div><h3>Strategy</h3><p>Marketing plans, consulting, campaign direction, and KPI alignment.</p></div>
+          <div class="service"><div class="service-icon" style="--c: var(--gold); color: var(--ink)">F</div><h3>Funnels</h3><p>Automation, lead capture, nurture systems, and conversion pathways.</p></div>
+          <div class="service"><div class="service-icon" style="--c: var(--charcoal)">AI</div><h3>AI Solutions + Training</h3><p>AI setup, workflow automation, team training, tool selection, prompts, and practical systems for member services.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gear-field" style="--gear-size: 310px; --gear-color: var(--gold);">
+      <div class="wrap">
+        <p class="eyebrow fade-up">Content Engine</p>
+        <h2 class="fade-up">Podcasts become content, community, and a productized member offer.</h2>
+        <p class="lead fade-up">Demvitatoes Podcast, HR Jock Podcast, and Work @ Wheel Podcast become brand-building channels and prototypes for a scalable podcast-to-business model.</p>
+        <div class="podcast-flow fade-up">
+          <div class="flow-step"><b>01</b><h3>Record</h3><p>Repeatable show formats, host positioning, guest flow, and production rhythm.</p></div>
+          <div class="flow-step"><b>02</b><h3>Clip</h3><p>Short-form assets for social distribution and local brand visibility.</p></div>
+          <div class="flow-step"><b>03</b><h3>Publish</h3><p>Distribution across podcast platforms, email, social, and member channels.</p></div>
+          <div class="flow-step"><b>04</b><h3>Promote</h3><p>Ambassador sharing, referral incentives, and community partnerships.</p></div>
+          <div class="flow-step"><b>05</b><h3>Monetize</h3><p>Podcast packages, sponsorships, service upsells, and member business growth.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gear-field" id="podcast" style="--gear-size: 360px; --gear-color: var(--teal);">
+      <div class="wrap">
+        <p class="eyebrow fade-up">Podcast Business Model</p>
+        <h2 class="fade-up">Turn the studio into recurring production revenue.</h2>
+        <p class="lead fade-up">Use this model to test podcast users, service selection, one-time setup fees, and revenue share. The main number shows Work @ Wheel's estimated monthly revenue, with Zah Brand Solutions' fulfillment side shown beside it.</p>
+        <div class="panel fade-up">
+          <div class="panel-head">Podcast Revenue Calculator <span>Interactive</span></div>
+          <div class="panel-body podcast-business">
+            <div>
+              <div class="podcast-services" aria-label="Podcast service options">
+                <label class="podcast-service">
+                  <input type="radio" name="podcastService" value="studio" checked>
+                  <span><strong>Studio space</strong><span>No equipment use</span></span>
+                  <input class="rate-input podcast-rate" data-service="studio" type="number" min="0" step="5" value="65" aria-label="Studio space rate">
+                </label>
+                <label class="podcast-service">
+                  <input type="radio" name="podcastService" value="cameraAudioLite">
+                  <span><strong>Camera + audio use</strong><span>Lite engineer</span></span>
+                  <input class="rate-input podcast-rate" data-service="cameraAudioLite" type="number" min="0" step="5" value="125" aria-label="Camera and audio use lite engineer rate">
+                </label>
+                <label class="podcast-service">
+                  <input type="radio" name="podcastService" value="cameraAudioEngineer">
+                  <span><strong>Camera + audio use</strong><span>With engineer</span></span>
+                  <input class="rate-input podcast-rate" data-service="cameraAudioEngineer" type="number" min="0" step="5" value="185" aria-label="Camera and audio use with engineer rate">
+                </label>
+                <label class="podcast-service">
+                  <input type="radio" name="podcastService" value="recordingLite">
+                  <span><strong>Recording + basic editing</strong><span>Lite engineer, intro, outro, few cuts</span></span>
+                  <input class="rate-input podcast-rate" data-service="recordingLite" type="number" min="0" step="5" value="200" aria-label="Recording lite engineer with basic editing rate">
+                </label>
+                <label class="podcast-service">
+                  <input type="radio" name="podcastService" value="recordingEngineer">
+                  <span><strong>Recording + basic editing</strong><span>With engineer, intro, outro, few cuts</span></span>
+                  <input class="rate-input podcast-rate" data-service="recordingEngineer" type="number" min="0" step="5" value="260" aria-label="Recording with engineer and basic editing rate">
+                </label>
+                <label class="podcast-service">
+                  <input type="radio" name="podcastService" value="liveLite">
+                  <span><strong>Live production</strong><span>Lite engineer</span></span>
+                  <input class="rate-input podcast-rate" data-service="liveLite" type="number" min="0" step="5" value="225" aria-label="Live lite engineer rate">
+                </label>
+                <label class="podcast-service">
+                  <input type="radio" name="podcastService" value="liveEngineer">
+                  <span><strong>Live production</strong><span>With engineer</span></span>
+                  <input class="rate-input podcast-rate" data-service="liveEngineer" type="number" min="0" step="5" value="285" aria-label="Live with engineer rate">
+                </label>
+              </div>
+            </div>
+            <div class="calculator">
+              <div class="controls">
+                <label>
+                  Podcast users
+                  <input id="podcastUsers" type="range" min="10" max="100" value="10">
+                  <span class="value" id="podcastUsersValue">10</span>
+                  <span class="hint">The number of members or outside clients buying a podcast service.</span>
+                </label>
+                <label>
+                  Sessions per user monthly
+                  <input id="podcastSessions" type="number" min="1" max="16" value="2">
+                  <span class="hint">How often each podcast user records, rents, or goes live each month.</span>
+                </label>
+                <label>
+                  Work @ Wheel revenue share
+                  <input id="podcastShare" type="range" min="0" max="100" step="5" value="30">
+                  <span class="value" id="podcastShareValue">30%</span>
+                  <span class="hint">The portion Work @ Wheel keeps from podcast service sales.</span>
+                </label>
+                <label>
+                  Zah Brand Solutions share
+                  <span class="value" id="podcastZahShareValue">70%</span>
+                  <span class="hint">Auto-calculated fulfillment side after Work @ Wheel's share.</span>
+                </label>
+                <label>
+                  Intro buyers this month
+                  <input id="introBuyers" type="range" min="0" max="25" value="3">
+                  <span class="value" id="introBuyersValue">3</span>
+                  <span class="hint">One-time $500 intro package buyers.</span>
+                </label>
+                <label>
+                  Live setup buyers this month
+                  <input id="liveSetupBuyers" type="range" min="0" max="25" value="2">
+                  <span class="value" id="liveSetupBuyersValue">2</span>
+                  <span class="hint">One-time $275 live setup buyers.</span>
+                </label>
+                <label>
+                  Intro fee
+                  <input class="rate-input" id="introFee" type="number" min="0" step="25" value="500">
+                  <span class="hint">One-time show intro setup fee.</span>
+                  <span class="fee-share-control">
+                    <span>Zah share of intro fee: <strong id="introZahShareValue">80%</strong></span>
+                    <input id="introZahShare" type="range" min="20" max="100" step="5" value="80">
+                  </span>
+                </label>
+                <label>
+                  Live setup fee
+                  <input class="rate-input" id="liveSetupFee" type="number" min="0" step="25" value="275">
+                  <span class="hint">One-time live configuration fee.</span>
+                  <span class="fee-share-control">
+                    <span>Zah share of live setup fee: <strong id="liveSetupZahShareValue">80%</strong></span>
+                    <input id="liveSetupZahShare" type="range" min="20" max="100" step="5" value="80">
+                  </span>
+                </label>
+              </div>
+              <div class="result podcast-summary">
+                <small>Illustrative monthly Work @ Wheel podcast revenue</small>
+                <div class="result-number" id="podcastResult">$1,044</div>
+                <div class="result-metrics">
+                  <div class="result-metric">
+                    <span>Recurring service sales</span>
+                    <b id="podcastRecurringResult">$1,300</b>
+                  </div>
+                  <div class="result-metric">
+                    <span>One-time setup sales</span>
+                    <b id="podcastOneTimeResult">$2,050</b>
+                  </div>
+                  <div class="result-metric">
+                    <span>Total gross sales</span>
+                    <b id="podcastGrossResult">$3,350</b>
+                  </div>
+                  <div class="result-metric">
+                    <span>Zah fulfillment side</span>
+                    <b id="podcastZahResult">$2,345</b>
+                  </div>
+                </div>
+                <div class="formula" id="podcastFormula">10 users x 2 sessions x $65 + one-time setup fees</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gear-field" id="timeline" style="--gear-size: 380px; --gear-color: var(--green);">
+      <div class="wrap">
+        <p class="eyebrow fade-up">Implementation Timeline</p>
+        <h2 class="fade-up">Three months to build the machine. Six months to optimize and scale.</h2>
+        <p class="lead fade-up">The first phase establishes the prototype system, core workflows, and member-facing offers. The second phase turns the system into a reliable revenue and media engine.</p>
+        <div class="timeline fade-up">
+          <div class="phase" style="--phase: var(--green)"><b>Month 1</b><strong>Audit + Architecture</strong><p>Define strategy, KPIs, content pillars, service menu, vendor needs, and operating cadence.</p></div>
+          <div class="phase" style="--phase: var(--teal)"><b>Month 2</b><strong>Prototype Build</strong><p>Scaffold podcast workflows, member offers, ambassador structure, reporting, and delivery models.</p></div>
+          <div class="phase" style="--phase: var(--coral)"><b>Month 3</b><strong>Launch System</strong><p>Activate shows, service options, internal marketing department routines, and first campaigns.</p></div>
+          <div class="phase" style="--phase: var(--blue)"><b>Month 4</b><strong>Measure Demand</strong><p>Track lead sources, member interest, service sales, content performance, and retention signals.</p></div>
+          <div class="phase" style="--phase: var(--gold)"><b>Month 5</b><strong>Optimize Offers</strong><p>Improve pricing, packages, funnels, event tie-ins, and ambassador incentives.</p></div>
+          <div class="phase" style="--phase: var(--charcoal)"><b>Month 6</b><strong>Scale Playbook</strong><p>Document repeatable systems for future clients, member podcast packages, and internal growth.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gear-field" id="terms" style="--gear-size: 320px; --gear-color: var(--coral);">
+      <div class="wrap">
+        <p class="eyebrow fade-up">Engagement Structure</p>
+        <h2 class="fade-up">Retainer-led growth with clear optional terms.</h2>
+        <p class="lead fade-up">The monthly retainer secures Zah Brand Solutions as Director of Marketing & Growth. Advanced builds, ad management, event execution, and major redesigns are scoped separately.</p>
+        <div class="commitments fade-up">
+          <div class="commitment">
+            <h3>Month-to-Month</h3>
+            <div class="price">$3,500</div>
+            <p>Flexible engagement for leadership, marketing structure, reporting, and growth management.</p>
+          </div>
+          <div class="commitment featured">
+            <h3>3-Month Commitment</h3>
+            <div class="price">$10,500</div>
+            <p>Recommended for system implementation, prototype development, content workflows, and offer launch.</p>
+          </div>
+          <div class="commitment">
+            <h3>6-Month Commitment</h3>
+            <div class="price">$21,000</div>
+            <p>Recommended for optimization, service scaling, ambassador traction, and repeatable media monetization.</p>
+          </div>
+        </div>
+        <div class="scope-boundary fade-up">
+          <div class="scope-panel highlight">
+            <h3>Retainer Covers Leadership + Infrastructure</h3>
+            <ul class="scope-list">
+              <li>Marketing department strategy, structure, priorities, and growth direction.</li>
+              <li>Prototype systems, playbooks, workflows, reporting, and offer architecture.</li>
+              <li>Podcast ecosystem planning, monetization model, and repeatable production frameworks.</li>
+              <li>White-labeled service packaging, pricing strategy, and member-facing service pathways.</li>
+              <li>Vendor/contractor direction, KPI tracking, budget planning, and ownership alignment.</li>
+            </ul>
+          </div>
+          <div class="scope-panel">
+            <h3>Execution-Heavy Work Is Scoped Separately</h3>
+            <ul class="scope-list">
+              <li>Full website builds, funnel builds, major branding projects, and redesigns.</li>
+              <li>Ad campaign management, ad spend, paid campaign execution, and campaign-generated revenue.</li>
+              <li>Heavy video editing, full podcast episode production, and advanced content production.</li>
+              <li>Event execution labor, daily social posting, unlimited revisions, or unlimited meetings.</li>
+              <li>Contractor costs, software costs, printing, media buying, and custom member client work.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="small-print fade-up"><strong>Boundary note:</strong> Zah Brand Solutions is being retained to build, direct, and manage the growth system, not to provide unlimited production labor inside the retainer. Production-heavy deliverables, campaign execution, ad spend, contractor costs, and custom client fulfillment should be quoted, approved, and scheduled separately.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <p class="eyebrow fade-up">Strategic Outcome</p>
+        <h2 class="fade-up">Coworking Space → Business Growth Platform</h2>
+        <div class="outcome-topline fade-up">
+          <div class="profit-box">
+            <span id="profitLabel">Projected first-year Work @ Wheel profit after 6-month Zah retainer</span>
+            <b id="outcomeProfit">$19,068</b>
+          </div>
+          <div class="period-toggle" aria-label="Revenue period">
+            <button type="button" class="active" data-period="annual">Annual</button>
+            <button type="button" data-period="monthly">Monthly</button>
+          </div>
+        </div>
+        <div class="outcome-grid fade-up">
+          <div class="outcome-card gross">
+            <span>Total gross revenue generated by modeled offers</span>
+            <b id="outcomeGross">$11,000</b>
+          </div>
+          <div class="outcome-card">
+            <span>Work @ Wheel share from generated revenue</span>
+            <b id="outcomeMonthly">$3,339</b>
+          </div>
+          <div class="outcome-card">
+            <span>Zah fulfillment share from generated revenue</span>
+            <b id="outcomeZahShare">$7,661</b>
+          </div>
+          <div class="outcome-card">
+            <span>6-month Zah retainer investment</span>
+            <b id="outcomeRetainer">$21,000</b>
+          </div>
+        </div>
+        <p class="exclusions fade-up" id="outcomeFormula">Estimate formula: gross generated revenue is split between Work @ Wheel and Zah based on the calculator settings. Zah fulfillment share is paid from generated service revenue; the retainer is the separate fixed investment to build and manage the system.</p>
+        <details class="revenue-accordion fade-up">
+          <summary>View itemized revenue, expense, and profit breakdown</summary>
+          <div class="revenue-detail">
+            <div class="detail-grid">
+              <div class="detail-card"><span>White-label gross sales</span><b id="detailServiceGross">$7,650</b></div>
+              <div class="detail-card"><span>Work @ Wheel white-label share</span><b id="detailServiceWork">$2,295</b></div>
+              <div class="detail-card"><span>Zah white-label fulfillment share</span><b id="detailServiceZah">$5,355</b></div>
+              <div class="detail-card"><span>Podcast gross sales</span><b id="detailPodcastGross">$3,350</b></div>
+              <div class="detail-card"><span>Work @ Wheel podcast share</span><b id="detailPodcastWork">$1,044</b></div>
+              <div class="detail-card"><span>Zah podcast fulfillment share</span><b id="detailPodcastZah">$2,306</b></div>
+              <div class="detail-card"><span>Total gross generated</span><b id="detailGrossTotal">$11,000</b></div>
+              <div class="detail-card"><span>Total Work @ Wheel share</span><b id="detailWorkTotal">$3,339</b></div>
+              <div class="detail-card"><span>Total Zah fulfillment share</span><b id="detailZahTotal">$7,661</b></div>
+              <div class="detail-card"><span>Zah retainer included in profit view</span><b id="detailRetainer">$21,000</b></div>
+              <div class="detail-card"><span>Total profit after retainer</span><b id="detailProfit">$19,068</b></div>
+              <div class="detail-card"><span>Selected view</span><b id="detailPeriod">Annual</b></div>
+            </div>
+            <ul class="detail-list">
+              <li id="detailWhiteLabelAssumption">White-label model uses active members, attachment rate, average package value, and Work @ Wheel revenue share.</li>
+              <li id="detailPodcastAssumption">Podcast model uses selected service rate, users, sessions, intro buyers, live setup buyers, and share settings.</li>
+              <li>Zah fulfillment share is paid from generated service revenue; it is not treated as an additional expense outside that revenue.</li>
+              <li>The retainer is treated as the fixed build and management investment for the selected period.</li>
+            </ul>
+          </div>
+        </details>
+        <p class="exclusions fade-up"><strong>Not included in these estimates:</strong> occupancy increases, new memberships, room rentals, event revenue, sponsorships, added revenue from paid ads or other campaigns, ad campaign budgets, ad management fees, advanced funnels, large branding projects, taxes, payment processing, contractor costs, churn, seasonality, or custom work scoped outside the retainer.</p>
+        <div class="close-box fade-up">
+          <p>Confirm the engagement structure and begin onboarding, KPI alignment, prototype buildout, and implementation planning. The objective is a self-sustaining marketing engine that drives revenue, expands brand influence, and monetizes existing infrastructure.</p>
+          <a class="button" href="#overview">Review Proposal</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const progress = document.querySelector(".progress");
+    const navLinks = [...document.querySelectorAll(".nav a")];
+    const sections = [...document.querySelectorAll(".section")];
+    const revealTargets = [...document.querySelectorAll(".section, .fade-up")];
+    const editStorageKey = "work-at-wheel-proposal-edits-v5";
+    const logoStorageKey = "work-at-wheel-proposal-logo-position-v1";
+    const podcastStorageKey = "work-at-wheel-proposal-podcast-model-v1";
+    const editSelector = [
+      "main h1",
+      "main h2",
+      "main h3",
+      "main p",
+      "main .chip",
+      "main .model-title",
+      "main .model-note",
+      "main .stat b",
+      "main .stat span",
+      "main .node strong",
+      "main .node span",
+      "main .service-icon",
+      "main .flow-step b",
+      "main .phase b",
+      "main .phase strong",
+      "main .price",
+      "main small:not(.hint)",
+      "main .result-metric span"
+    ].join(", ");
+    const editableElements = [...document.querySelectorAll(editSelector)]
+      .filter(element => !["result", "grossResult", "zahResult"].includes(element.id));
+    const saveButton = document.getElementById("saveEdits");
+    const undoButton = document.getElementById("undoEdit");
+    const resetButton = document.getElementById("resetEdits");
+    const editorToolbar = document.querySelector(".editor-toolbar");
+    const toggleEditor = document.getElementById("toggleEditor");
+    const textColor = document.getElementById("textColor");
+    const textSize = document.getElementById("textSize");
+    const decreaseSize = document.getElementById("decreaseSize");
+    const increaseSize = document.getElementById("increaseSize");
+    const saveStatus = document.getElementById("saveStatus");
+    const zahLogo = document.getElementById("zahLogo");
+    let activeEditable = null;
+    let undoStack = [];
+    let defaultEditState = [];
+    let logoDrag = null;
+    let defaultPodcastModel = null;
+
+    function formatMoney(value) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function captureEditState() {
+      return editableElements.map(element => ({
+        id: element.dataset.editId,
+        html: element.innerHTML,
+        color: element.style.color || "",
+        fontSize: element.style.fontSize || ""
+      }));
+    }
+
+    function applyEditState(state) {
+      if (!Array.isArray(state)) return;
+      state.forEach(item => {
+        const element = editableElements.find(candidate => candidate.dataset.editId === item.id);
+        if (!element) return;
+        element.innerHTML = item.html;
+        element.style.color = item.color || "";
+        element.style.fontSize = item.fontSize || "";
+      });
+    }
+
+    function statesMatch(a, b) {
+      return JSON.stringify(a) === JSON.stringify(b);
+    }
+
+    function pushUndoState() {
+      const current = captureEditState();
+      const last = undoStack[undoStack.length - 1];
+      if (!last || !statesMatch(last, current)) {
+        undoStack.push(current);
+        undoStack = undoStack.slice(-50);
+      }
+    }
+
+    function setStatus(message) {
+      saveStatus.textContent = message;
+      window.clearTimeout(setStatus.timer);
+      setStatus.timer = window.setTimeout(() => {
+        saveStatus.textContent = "Editable";
+      }, 1800);
+    }
+
+    function initializeEditor() {
+      editableElements.forEach((element, index) => {
+        element.dataset.editId = `editable-${index}`;
+        element.setAttribute("contenteditable", "true");
+        element.setAttribute("spellcheck", "true");
+        element.addEventListener("focus", () => {
+          activeEditable = element;
+          textColor.value = rgbToHex(getComputedStyle(element).color);
+          textSize.value = Math.round(parseFloat(getComputedStyle(element).fontSize));
+        });
+        element.addEventListener("beforeinput", pushUndoState);
+        element.addEventListener("input", () => setStatus("Unsaved"));
+      });
+
+      defaultEditState = captureEditState();
+      const saved = localStorage.getItem(editStorageKey);
+      if (saved) {
+        try {
+          applyEditState(JSON.parse(saved));
+          setStatus("Loaded");
+        } catch (error) {
+          localStorage.removeItem(editStorageKey);
+        }
+      }
+    }
+
+    function rgbToHex(color) {
+      const match = color.match(/\d+/g);
+      if (!match) return "#17202a";
+      return `#${match.slice(0, 3).map(value => Number(value).toString(16).padStart(2, "0")).join("")}`;
+    }
+
+    saveButton.addEventListener("click", () => {
+      localStorage.setItem(editStorageKey, JSON.stringify(captureEditState()));
+      saveLogoPosition();
+      localStorage.setItem(podcastStorageKey, JSON.stringify(capturePodcastModel()));
+      setStatus("Saved");
+    });
+
+    toggleEditor.addEventListener("click", () => {
+      const isHidden = editorToolbar.classList.toggle("hidden");
+      toggleEditor.title = isHidden ? "Show editor" : "Hide editor";
+      toggleEditor.setAttribute("aria-label", isHidden ? "Show editor" : "Hide editor");
+    });
+
+    undoButton.addEventListener("click", () => {
+      const previous = undoStack.pop();
+      if (!previous) {
+        setStatus("No undo");
+        return;
+      }
+      applyEditState(previous);
+      setStatus("Undone");
+    });
+
+    resetButton.addEventListener("click", () => {
+      if (!window.confirm("Reset all saved text edits for this proposal?")) return;
+      pushUndoState();
+      localStorage.removeItem(editStorageKey);
+      localStorage.removeItem(logoStorageKey);
+      localStorage.removeItem(podcastStorageKey);
+      applyEditState(defaultEditState);
+      resetLogoPosition();
+      applyPodcastModel(defaultPodcastModel);
+      updatePodcastCalculator();
+      setStatus("Reset");
+    });
+
+    textColor.addEventListener("input", () => {
+      if (!activeEditable) return;
+      pushUndoState();
+      activeEditable.style.color = textColor.value;
+      setStatus("Unsaved");
+    });
+
+    function setActiveFontSize(size) {
+      if (!activeEditable) return;
+      const nextSize = Math.max(8, Math.min(140, Number(size)));
+      if (!Number.isFinite(nextSize)) return;
+      pushUndoState();
+      activeEditable.style.fontSize = `${nextSize}px`;
+      textSize.value = Math.round(nextSize);
+      setStatus("Unsaved");
+    }
+
+    textSize.addEventListener("change", () => {
+      setActiveFontSize(textSize.value);
+    });
+
+    textSize.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        setActiveFontSize(textSize.value);
+      }
+    });
+
+    decreaseSize.addEventListener("click", () => {
+      if (!activeEditable) return;
+      const current = parseFloat(getComputedStyle(activeEditable).fontSize);
+      setActiveFontSize(current - 2);
+    });
+
+    increaseSize.addEventListener("click", () => {
+      if (!activeEditable) return;
+      const current = parseFloat(getComputedStyle(activeEditable).fontSize);
+      setActiveFontSize(current + 2);
+    });
+
+    function saveLogoPosition() {
+      localStorage.setItem(logoStorageKey, JSON.stringify({
+        transform: zahLogo.style.transform || "",
+        x: Number(zahLogo.dataset.x || 0),
+        y: Number(zahLogo.dataset.y || 0)
+      }));
+    }
+
+    function applyLogoPosition(position) {
+      const x = Number(position?.x || 0);
+      const y = Number(position?.y || 0);
+      zahLogo.dataset.x = x;
+      zahLogo.dataset.y = y;
+      zahLogo.style.transform = position?.transform || `translate(${x}px, ${y}px)`;
+    }
+
+    function resetLogoPosition() {
+      zahLogo.dataset.x = 0;
+      zahLogo.dataset.y = 0;
+      zahLogo.style.transform = "";
+    }
+
+    function initializeLogoDrag() {
+      const savedPosition = localStorage.getItem(logoStorageKey);
+      if (savedPosition) {
+        try {
+          applyLogoPosition(JSON.parse(savedPosition));
+        } catch (error) {
+          localStorage.removeItem(logoStorageKey);
+        }
+      }
+
+      zahLogo.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        const currentX = Number(zahLogo.dataset.x || 0);
+        const currentY = Number(zahLogo.dataset.y || 0);
+        logoDrag = {
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          currentX,
+          currentY
+        };
+        zahLogo.classList.add("dragging");
+        zahLogo.setPointerCapture(event.pointerId);
+      });
+
+      zahLogo.addEventListener("pointermove", event => {
+        if (!logoDrag || event.pointerId !== logoDrag.pointerId) return;
+        const x = logoDrag.currentX + event.clientX - logoDrag.startX;
+        const y = logoDrag.currentY + event.clientY - logoDrag.startY;
+        zahLogo.dataset.x = x;
+        zahLogo.dataset.y = y;
+        zahLogo.style.transform = `translate(${x}px, ${y}px)`;
+      });
+
+      function endDrag(event) {
+        if (!logoDrag || event.pointerId !== logoDrag.pointerId) return;
+        zahLogo.classList.remove("dragging");
+        logoDrag = null;
+        setStatus("Unsaved");
+      }
+
+      zahLogo.addEventListener("pointerup", endDrag);
+      zahLogo.addEventListener("pointercancel", endDrag);
+    }
+
+    function updateProgress() {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const amount = max > 0 ? window.scrollY / max : 0;
+      progress.style.transform = `scaleX(${amount})`;
+    }
+
+    function setActiveNav() {
+      let current = sections[0].id;
+      sections.forEach(section => {
+        if (section.id && section.getBoundingClientRect().top < window.innerHeight * 0.42) {
+          current = section.id;
+        }
+      });
+      navLinks.forEach(link => {
+        link.classList.toggle("active", link.getAttribute("href") === `#${current}`);
+      });
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("in-view");
+      });
+    }, { threshold: 0.18 });
+
+    revealTargets.forEach(target => observer.observe(target));
+
+    const members = document.getElementById("members");
+    const attach = document.getElementById("attach");
+    const pkg = document.getElementById("package");
+    const share = document.getElementById("share");
+    const membersValue = document.getElementById("membersValue");
+    const attachValue = document.getElementById("attachValue");
+    const packageValue = document.getElementById("packageValue");
+    const shareValue = document.getElementById("shareValue");
+    const result = document.getElementById("result");
+    const grossResult = document.getElementById("grossResult");
+    const zahResult = document.getElementById("zahResult");
+    const podcastUsers = document.getElementById("podcastUsers");
+    const podcastSessions = document.getElementById("podcastSessions");
+    const podcastShare = document.getElementById("podcastShare");
+    const introBuyers = document.getElementById("introBuyers");
+    const liveSetupBuyers = document.getElementById("liveSetupBuyers");
+    const introFee = document.getElementById("introFee");
+    const liveSetupFee = document.getElementById("liveSetupFee");
+    const introZahShare = document.getElementById("introZahShare");
+    const liveSetupZahShare = document.getElementById("liveSetupZahShare");
+    const podcastUsersValue = document.getElementById("podcastUsersValue");
+    const podcastShareValue = document.getElementById("podcastShareValue");
+    const podcastZahShareValue = document.getElementById("podcastZahShareValue");
+    const introZahShareValue = document.getElementById("introZahShareValue");
+    const liveSetupZahShareValue = document.getElementById("liveSetupZahShareValue");
+    const introBuyersValue = document.getElementById("introBuyersValue");
+    const liveSetupBuyersValue = document.getElementById("liveSetupBuyersValue");
+    const podcastResult = document.getElementById("podcastResult");
+    const podcastRecurringResult = document.getElementById("podcastRecurringResult");
+    const podcastOneTimeResult = document.getElementById("podcastOneTimeResult");
+    const podcastGrossResult = document.getElementById("podcastGrossResult");
+    const podcastZahResult = document.getElementById("podcastZahResult");
+    const podcastFormula = document.getElementById("podcastFormula");
+    const outcomeGross = document.getElementById("outcomeGross");
+    const outcomeMonthly = document.getElementById("outcomeMonthly");
+    const outcomeZahShare = document.getElementById("outcomeZahShare");
+    const outcomeRetainer = document.getElementById("outcomeRetainer");
+    const outcomeProfit = document.getElementById("outcomeProfit");
+    const profitLabel = document.getElementById("profitLabel");
+    const outcomeFormula = document.getElementById("outcomeFormula");
+    const detailServiceGross = document.getElementById("detailServiceGross");
+    const detailServiceWork = document.getElementById("detailServiceWork");
+    const detailServiceZah = document.getElementById("detailServiceZah");
+    const detailPodcastGross = document.getElementById("detailPodcastGross");
+    const detailPodcastWork = document.getElementById("detailPodcastWork");
+    const detailPodcastZah = document.getElementById("detailPodcastZah");
+    const detailGrossTotal = document.getElementById("detailGrossTotal");
+    const detailWorkTotal = document.getElementById("detailWorkTotal");
+    const detailZahTotal = document.getElementById("detailZahTotal");
+    const detailRetainer = document.getElementById("detailRetainer");
+    const detailProfit = document.getElementById("detailProfit");
+    const detailPeriod = document.getElementById("detailPeriod");
+    const detailWhiteLabelAssumption = document.getElementById("detailWhiteLabelAssumption");
+    const detailPodcastAssumption = document.getElementById("detailPodcastAssumption");
+    const periodButtons = [...document.querySelectorAll(".period-toggle button")];
+    const podcastServiceRadios = [...document.querySelectorAll('input[name="podcastService"]')];
+    const podcastRateInputs = [...document.querySelectorAll(".podcast-rate")];
+    const monthlyRetainer = 3500;
+    const retainerMonths = 6;
+    let serviceModel = { workAtWheel: 0, zah: 0, gross: 0 };
+    let podcastModel = { workAtWheel: 0, zah: 0, gross: 0 };
+    let outcomePeriod = "annual";
+
+    function updateCalculator() {
+      const monthly = Math.round(Number(members.value) * (Number(attach.value) / 100) * Number(pkg.value));
+      const workAtWheelShare = Math.round(monthly * (Number(share.value) / 100));
+      const zahShare = monthly - workAtWheelShare;
+      serviceModel = { workAtWheel: workAtWheelShare, zah: zahShare, gross: monthly };
+      membersValue.textContent = members.value;
+      attachValue.textContent = `${attach.value}%`;
+      packageValue.textContent = formatMoney(Number(pkg.value));
+      shareValue.textContent = `${share.value}%`;
+      result.textContent = formatMoney(workAtWheelShare);
+      grossResult.textContent = formatMoney(monthly);
+      zahResult.textContent = formatMoney(zahShare);
+      updateStrategicOutcome();
+    }
+
+    [members, attach, pkg, share].forEach(input => input.addEventListener("input", updateCalculator));
+
+    periodButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        outcomePeriod = button.dataset.period;
+        periodButtons.forEach(candidate => {
+          candidate.classList.toggle("active", candidate === button);
+        });
+        updateStrategicOutcome();
+      });
+    });
+
+    function getSelectedPodcastService() {
+      return podcastServiceRadios.find(radio => radio.checked) || podcastServiceRadios[0];
+    }
+
+    function getSelectedPodcastRate() {
+      const selected = getSelectedPodcastService();
+      const input = podcastRateInputs.find(rate => rate.dataset.service === selected.value);
+      return Number(input?.value || 0);
+    }
+
+    function getSelectedPodcastName() {
+      const selected = getSelectedPodcastService();
+      const label = selected.closest(".podcast-service");
+      return label?.querySelector("strong")?.textContent.trim() || "Selected service";
+    }
+
+    function capturePodcastModel() {
+      return {
+        users: podcastUsers.value,
+        sessions: podcastSessions.value,
+        share: podcastShare.value,
+        introZahShare: introZahShare.value,
+        liveSetupZahShare: liveSetupZahShare.value,
+        introBuyers: introBuyers.value,
+        liveSetupBuyers: liveSetupBuyers.value,
+        introFee: introFee.value,
+        liveSetupFee: liveSetupFee.value,
+        selectedService: getSelectedPodcastService().value,
+        rates: Object.fromEntries(podcastRateInputs.map(input => [input.dataset.service, input.value]))
+      };
+    }
+
+    function applyPodcastModel(model) {
+      if (!model) return;
+      podcastUsers.value = model.users ?? podcastUsers.value;
+      podcastSessions.value = model.sessions ?? podcastSessions.value;
+      podcastShare.value = model.share ?? podcastShare.value;
+      introZahShare.value = model.introZahShare ?? model.oneTimeZahShare ?? introZahShare.value;
+      liveSetupZahShare.value = model.liveSetupZahShare ?? model.oneTimeZahShare ?? liveSetupZahShare.value;
+      introBuyers.value = model.introBuyers ?? introBuyers.value;
+      liveSetupBuyers.value = model.liveSetupBuyers ?? liveSetupBuyers.value;
+      introFee.value = model.introFee ?? introFee.value;
+      liveSetupFee.value = model.liveSetupFee ?? liveSetupFee.value;
+      podcastServiceRadios.forEach(radio => {
+        radio.checked = radio.value === model.selectedService;
+      });
+      podcastRateInputs.forEach(input => {
+        if (model.rates?.[input.dataset.service] !== undefined) {
+          input.value = model.rates[input.dataset.service];
+        }
+      });
+    }
+
+    function updatePodcastCalculator() {
+      const users = Number(podcastUsers.value);
+      const sessions = Math.max(1, Number(podcastSessions.value || 1));
+      const selectedService = getSelectedPodcastService();
+      const studioOnly = selectedService.value === "studio";
+      const selectedRate = getSelectedPodcastRate();
+      const recurring = Math.round(users * sessions * selectedRate);
+      const introSales = Math.round(Number(introBuyers.value) * Number(introFee.value || 0));
+      const liveSetupSales = Math.round(Number(liveSetupBuyers.value) * Number(liveSetupFee.value || 0));
+      const oneTime = introSales + liveSetupSales;
+      const gross = recurring + oneTime;
+      const sharePercent = studioOnly ? 100 : Number(podcastShare.value);
+      const recurringWorkAtWheelShare = Math.round(recurring * (sharePercent / 100));
+      const recurringZahShare = studioOnly ? 0 : recurring - recurringWorkAtWheelShare;
+      const introZahPercent = Number(introZahShare.value);
+      const liveSetupZahPercent = Number(liveSetupZahShare.value);
+      const oneTimeZahAmount = Math.round((introSales * (introZahPercent / 100)) + (liveSetupSales * (liveSetupZahPercent / 100)));
+      const oneTimeWorkAtWheelAmount = oneTime - oneTimeZahAmount;
+      const workAtWheelShare = recurringWorkAtWheelShare + oneTimeWorkAtWheelAmount;
+      const zahShare = recurringZahShare + oneTimeZahAmount;
+      const zahPercent = studioOnly ? 0 : 100 - Number(podcastShare.value);
+      podcastModel = { workAtWheel: workAtWheelShare, zah: zahShare, gross };
+
+      podcastUsersValue.textContent = users;
+      podcastShareValue.textContent = studioOnly ? "100%" : `${podcastShare.value}%`;
+      podcastZahShareValue.textContent = `${zahPercent}%`;
+      introZahShareValue.textContent = `${introZahPercent}%`;
+      liveSetupZahShareValue.textContent = `${liveSetupZahPercent}%`;
+      introBuyersValue.textContent = introBuyers.value;
+      liveSetupBuyersValue.textContent = liveSetupBuyers.value;
+      podcastResult.textContent = formatMoney(workAtWheelShare);
+      podcastRecurringResult.textContent = formatMoney(recurring);
+      podcastOneTimeResult.textContent = formatMoney(oneTime);
+      podcastGrossResult.textContent = formatMoney(gross);
+      podcastZahResult.textContent = formatMoney(zahShare);
+      podcastFormula.textContent = studioOnly
+        ? `${users} users x ${sessions} sessions x ${formatMoney(selectedRate)} studio space. Studio-only recurring revenue stays with Work @ Wheel; one-time fees use the card-level Zah splits.`
+        : `${users} users x ${sessions} sessions x ${formatMoney(selectedRate)} ${getSelectedPodcastName()} + ${formatMoney(oneTime)} one-time setup sales using the card-level Zah splits`;
+      updateStrategicOutcome();
+    }
+
+    function updateStrategicOutcome() {
+      if (!outcomeMonthly) return;
+      const grossMonthly = serviceModel.gross + podcastModel.gross;
+      const workMonthly = serviceModel.workAtWheel + podcastModel.workAtWheel;
+      const zahMonthly = serviceModel.zah + podcastModel.zah;
+      const retainerTotal = monthlyRetainer * retainerMonths;
+      const isAnnual = outcomePeriod === "annual";
+      const periodMultiplier = isAnnual ? 12 : 1;
+      const gross = grossMonthly * periodMultiplier;
+      const workShare = workMonthly * periodMultiplier;
+      const zahShare = zahMonthly * periodMultiplier;
+      const retainerImpact = isAnnual ? retainerTotal : monthlyRetainer;
+      const profit = workShare - retainerImpact;
+      const serviceGross = serviceModel.gross * periodMultiplier;
+      const serviceWork = serviceModel.workAtWheel * periodMultiplier;
+      const serviceZah = serviceModel.zah * periodMultiplier;
+      const podcastGross = podcastModel.gross * periodMultiplier;
+      const podcastWork = podcastModel.workAtWheel * periodMultiplier;
+      const podcastZah = podcastModel.zah * periodMultiplier;
+
+      outcomeGross.textContent = formatMoney(gross);
+      outcomeMonthly.textContent = formatMoney(workShare);
+      outcomeZahShare.textContent = formatMoney(zahShare);
+      outcomeRetainer.textContent = formatMoney(retainerImpact);
+      outcomeProfit.textContent = formatMoney(profit);
+      profitLabel.textContent = isAnnual
+        ? "Projected first-year Work @ Wheel profit after 6-month Zah retainer"
+        : "Projected monthly Work @ Wheel profit after monthly Zah retainer";
+      outcomeFormula.textContent = isAnnual
+        ? `Annual view: ${formatMoney(gross)} gross generated revenue = ${formatMoney(workShare)} to Work @ Wheel + ${formatMoney(zahShare)} to Zah fulfillment. Profit shown subtracts the ${formatMoney(retainerTotal)} six-month retainer.`
+        : `Monthly view: ${formatMoney(grossMonthly)} gross generated revenue = ${formatMoney(workMonthly)} to Work @ Wheel + ${formatMoney(zahMonthly)} to Zah fulfillment. Profit shown subtracts the ${formatMoney(monthlyRetainer)} monthly retainer.`;
+      detailServiceGross.textContent = formatMoney(serviceGross);
+      detailServiceWork.textContent = formatMoney(serviceWork);
+      detailServiceZah.textContent = formatMoney(serviceZah);
+      detailPodcastGross.textContent = formatMoney(podcastGross);
+      detailPodcastWork.textContent = formatMoney(podcastWork);
+      detailPodcastZah.textContent = formatMoney(podcastZah);
+      detailGrossTotal.textContent = formatMoney(gross);
+      detailWorkTotal.textContent = formatMoney(workShare);
+      detailZahTotal.textContent = formatMoney(zahShare);
+      detailRetainer.textContent = formatMoney(retainerImpact);
+      detailProfit.textContent = formatMoney(profit);
+      detailPeriod.textContent = isAnnual ? "Annual" : "Monthly";
+      detailWhiteLabelAssumption.textContent = `White-label model: ${members.value} active members x ${attach.value}% attachment x ${formatMoney(Number(pkg.value))} average package = ${formatMoney(serviceModel.gross)} monthly gross, split ${share.value}% to Work @ Wheel and ${100 - Number(share.value)}% to Zah.`;
+      detailPodcastAssumption.textContent = `Podcast model: ${podcastUsers.value} users x ${podcastSessions.value || 1} sessions x ${formatMoney(getSelectedPodcastRate())} ${getSelectedPodcastName()} plus ${introBuyers.value} intro buyer(s) and ${liveSetupBuyers.value} live setup buyer(s).`;
+    }
+
+    function initializePodcastModel() {
+      defaultPodcastModel = capturePodcastModel();
+      const saved = localStorage.getItem(podcastStorageKey);
+      if (saved) {
+        try {
+          applyPodcastModel(JSON.parse(saved));
+        } catch (error) {
+          localStorage.removeItem(podcastStorageKey);
+        }
+      }
+      [...podcastServiceRadios, ...podcastRateInputs, podcastUsers, podcastSessions, podcastShare, introZahShare, liveSetupZahShare, introBuyers, liveSetupBuyers, introFee, liveSetupFee]
+        .forEach(input => input.addEventListener("input", () => {
+          updatePodcastCalculator();
+          localStorage.setItem(podcastStorageKey, JSON.stringify(capturePodcastModel()));
+        }));
+      podcastServiceRadios.forEach(input => input.addEventListener("change", () => {
+        updatePodcastCalculator();
+        localStorage.setItem(podcastStorageKey, JSON.stringify(capturePodcastModel()));
+      }));
+      updatePodcastCalculator();
+    }
+    window.addEventListener("scroll", () => {
+      updateProgress();
+      setActiveNav();
+    }, { passive: true });
+
+    initializeEditor();
+    initializeLogoDrag();
+    initializePodcastModel();
+    updateProgress();
+    setActiveNav();
+    updateCalculator();
+  </script>
+</body>
+</html>
