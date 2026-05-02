@@ -981,13 +981,15 @@
 
     .portfolio-layout {
       display: grid;
-      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      grid-template-columns: 320px minmax(0, 1fr);
       gap: 22px;
       align-items: start;
       margin-top: 30px;
     }
 
     .linkedin-card {
+      position: sticky;
+      top: 84px;
       padding: 24px;
       border-radius: 8px;
       color: #fff;
@@ -1002,7 +1004,7 @@
 
     .portfolio-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }
 
@@ -1013,6 +1015,24 @@
       background: #fff;
       text-decoration: none;
       transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .portfolio-card::before {
+      content: attr(data-initial);
+      display: none;
+      place-items: center;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      color: rgba(23, 32, 42, 0.72);
+      background:
+        linear-gradient(135deg, rgba(29,143,111,0.18), rgba(240,93,94,0.14)),
+        #f4f7f6;
+      font-size: 34px;
+      font-weight: 950;
+    }
+
+    .portfolio-card.image-missing::before {
+      display: grid;
     }
 
     .portfolio-card:hover {
@@ -1026,6 +1046,13 @@
       aspect-ratio: 16 / 10;
       object-fit: cover;
       background: #eef1f4;
+    }
+
+    .portfolio-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
     }
 
     .portfolio-card div {
@@ -1740,55 +1767,59 @@
           <div class="linkedin-card">
             <h3>Lorenzo White</h3>
             <p>Founder and strategist behind Zah Brand Solutions, combining branding, marketing systems, AI tools, automation, web development, and growth strategy into practical business solutions.</p>
-            <a class="button" href="https://www.linkedin.com/in/lorenzowhite/" target="_blank" rel="noopener">View LinkedIn Profile</a>
+            <div class="portfolio-actions">
+              <a class="button" href="https://www.linkedin.com/in/lorenzowhite/" target="_blank" rel="noopener">View LinkedIn</a>
+              <a class="button" href="zah-brand-solutions-portfolio.pdf" target="_blank" rel="noopener">View PDF Portfolio</a>
+            </div>
+            <p class="small-print" style="background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.72); border-color: rgba(255,255,255,0.14);">Some older live sites or previews may be archived, unavailable, or slow to generate. The PDF portfolio is attached here as a stable reference for reviewing the broader body of work.</p>
           </div>
           <div class="portfolio-grid">
-            <a class="portfolio-card" href="https://askmskay.com" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Faskmskay.com?w=640" alt="Powered By AI website preview">
+            <a class="portfolio-card" data-initial="AI" href="https://askmskay.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Faskmskay.com?w=640" alt="Powered By AI website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>Powered By AI</strong><span>Create AI agents that keep users engaged, informed, and moving toward action.</span></div>
             </a>
-            <a class="portfolio-card" href="https://mpihomes.com" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fmpihomes.com?w=640" alt="MPI Homes website preview">
+            <a class="portfolio-card" data-initial="PM" href="https://mpihomes.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fmpihomes.com?w=640" alt="MPI Homes website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>Property Management</strong><span>Professional digital presence for property and housing-related services.</span></div>
             </a>
-            <a class="portfolio-card" href="https://makinabrand.com" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fmakinabrand.com?w=640" alt="Makin A Brand website preview">
+            <a class="portfolio-card" data-initial="TV" href="https://makinabrand.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fmakinabrand.com?w=640" alt="Makin A Brand website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>Reality TV?</strong><span>Audience-building funnels and promotion for casting and entertainment projects.</span></div>
             </a>
-            <a class="portfolio-card" href="https://www.oaklandandtheworld.org" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.oaklandandtheworld.org?w=640" alt="Oakland and the World website preview">
+            <a class="portfolio-card" data-initial="BI" href="https://www.oaklandandtheworld.org" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.oaklandandtheworld.org?w=640" alt="Oakland and the World website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>Brand Identity</strong><span>Clear visual identity work for mission-driven and community-centered brands.</span></div>
             </a>
-            <a class="portfolio-card" href="https://www.theblackpantherapartments.com" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.theblackpantherapartments.com?w=640" alt="The Black Panther Apartments website preview">
+            <a class="portfolio-card" data-initial="AP" href="https://www.theblackpantherapartments.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.theblackpantherapartments.com?w=640" alt="The Black Panther Apartments website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>Application Processing</strong><span>Strategic website experience built to support secure user applications.</span></div>
             </a>
-            <a class="portfolio-card" href="https://www.brandontjackson.love" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.brandontjackson.love?w=640" alt="Brandon T Jackson website preview">
+            <a class="portfolio-card" data-initial="EB" href="https://www.brandontjackson.love" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.brandontjackson.love?w=640" alt="Brandon T Jackson website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>Event Branding</strong><span>Memorable event experiences supported by clear brand presentation.</span></div>
             </a>
-            <a class="portfolio-card" href="https://hbcbranddesign.wixsite.com" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fhbcbranddesign.wixsite.com?w=640" alt="HBC Brand Design website preview">
+            <a class="portfolio-card" data-initial="PK" href="https://hbcbranddesign.wixsite.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fhbcbranddesign.wixsite.com?w=640" alt="HBC Brand Design website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>Product Packaging</strong><span>Logo, packaging, website, and digital marketing support for product brands.</span></div>
             </a>
-            <a class="portfolio-card" href="https://wholesalenaturalbodycare.com" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwholesalenaturalbodycare.com?w=640" alt="Wholesale Natural Body Care website preview">
+            <a class="portfolio-card" data-initial="WL" href="https://wholesalenaturalbodycare.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwholesalenaturalbodycare.com?w=640" alt="Wholesale Natural Body Care website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>White Label Branding</strong><span>Large-scale brand management and launch support for body care products.</span></div>
             </a>
-            <a class="portfolio-card" href="https://hebrewcare.com" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fhebrewcare.com?w=640" alt="Hebrew Care website preview">
+            <a class="portfolio-card" data-initial="HC" href="https://hebrewcare.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fhebrewcare.com?w=640" alt="Hebrew Care website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>Iconic Family Brand</strong><span>Voice, presence, and trust-building for a wholesome family brand.</span></div>
             </a>
-            <a class="portfolio-card" href="https://berkslatinochamber.com" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fberkslatinochamber.com?w=640" alt="Berks Latino Chamber website preview">
+            <a class="portfolio-card" data-initial="CE" href="https://berkslatinochamber.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fberkslatinochamber.com?w=640" alt="Berks Latino Chamber website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>Community Engagement</strong><span>On-brand messaging and content to keep local audiences informed.</span></div>
             </a>
-            <a class="portfolio-card" href="https://palatinosjuntos.org" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fpalatinosjuntos.org?w=640" alt="PA Latinos Juntos website preview">
+            <a class="portfolio-card" data-initial="ML" href="https://palatinosjuntos.org" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fpalatinosjuntos.org?w=640" alt="PA Latinos Juntos website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>Multilanguage</strong><span>Culturally aligned communication across audiences and languages.</span></div>
             </a>
-            <a class="portfolio-card" href="https://zahbrandsolutions.com/" target="_blank" rel="noopener">
-              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fzahbrandsolutions.com?w=640" alt="Zah Brand Solutions website preview">
+            <a class="portfolio-card" data-initial="SM" href="https://zahbrandsolutions.com/" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fzahbrandsolutions.com?w=640" alt="Zah Brand Solutions website preview" onerror="this.closest('.portfolio-card').classList.add('image-missing'); this.remove();">
               <div><strong>Strategic Marketing</strong><span>Systems, messaging, automation, AI tools, and full-funnel growth strategy.</span></div>
             </a>
           </div>
