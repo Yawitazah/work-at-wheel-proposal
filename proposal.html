@@ -1470,6 +1470,7 @@
   <div class="editor-menu hidden" id="editorMenu" aria-label="Private controls">
     <button type="button" id="adminLogin">Admin</button>
     <button type="button" class="admin-only hidden" id="startEditing">Edit</button>
+    <button type="button" class="admin-only hidden" id="negotiationTool">Negotiation</button>
     <button type="button" class="admin-only hidden" id="analyticsInfo">Analytics</button>
   </div>
   <button type="button" class="editor-toggle" id="toggleEditor" title="Show editor" aria-label="Show editor">✎</button>
@@ -2068,6 +2069,7 @@
     const toggleEditor = document.getElementById("toggleEditor");
     const adminLogin = document.getElementById("adminLogin");
     const startEditing = document.getElementById("startEditing");
+    const negotiationTool = document.getElementById("negotiationTool");
     const analyticsInfo = document.getElementById("analyticsInfo");
     const adminOnlyButtons = [...document.querySelectorAll(".admin-only")];
     const textColor = document.getElementById("textColor");
@@ -2244,6 +2246,11 @@
       if (!adminUnlocked) return;
       editorMenu.classList.add("hidden");
       window.alert("Tracking needs an analytics service or backend. A static GitHub Pages file cannot securely collect private page/section views by itself.");
+    });
+
+    negotiationTool.addEventListener("click", () => {
+      if (!adminUnlocked) return;
+      window.open("negotiation.html", "_blank", "noopener");
     });
 
     undoButton.addEventListener("click", () => {
