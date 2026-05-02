@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Zah Negotiation Calculator</title>
+  <title>Zah Earnings Negotiation Tool</title>
   <style>
     :root {
       --ink: #17202a;
@@ -30,6 +30,8 @@
         var(--paper);
     }
 
+    .hidden { display: none !important; }
+
     .login {
       min-height: 100vh;
       display: grid;
@@ -41,7 +43,7 @@
     .card {
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: rgba(255,255,255,0.84);
+      background: rgba(255,255,255,0.86);
       box-shadow: var(--shadow);
     }
 
@@ -50,24 +52,22 @@
       padding: 26px;
     }
 
-    .hidden { display: none !important; }
-
     .app {
-      width: min(1420px, calc(100% - 32px));
+      width: min(1440px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 24px 0 48px;
+      padding: 24px 0 54px;
     }
 
     .topbar {
       position: sticky;
       top: 0;
-      z-index: 4;
+      z-index: 5;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
       padding: 14px 0;
-      background: rgba(255, 253, 248, 0.86);
+      background: rgba(255,253,248,0.9);
       backdrop-filter: blur(16px);
     }
 
@@ -80,30 +80,28 @@
     }
 
     h2 {
-      margin-bottom: 14px;
-      font-size: 24px;
+      margin-bottom: 12px;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1.08;
     }
 
-    h3 {
-      margin-bottom: 10px;
-      font-size: 17px;
-    }
+    h3 { margin-bottom: 10px; font-size: 18px; }
 
     .lead {
       color: var(--muted);
+      max-width: 860px;
       font-size: 18px;
       line-height: 1.45;
-      max-width: 820px;
     }
 
-    .tabs {
+    .actions,
+    .quick {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin: 22px 0;
+      align-items: center;
     }
 
-    .tab,
     button {
       min-height: 38px;
       border: 1px solid var(--line);
@@ -117,29 +115,21 @@
       padding: 0 13px;
     }
 
-    .tab.active,
-    button.primary {
-      color: #fff;
-      background: var(--green);
-      border-color: var(--green);
-    }
+    button.primary { color: #fff; background: var(--green); border-color: var(--green); }
+    button.warn { color: #fff; background: var(--red); border-color: var(--red); }
 
-    button.warn {
-      color: #fff;
-      background: var(--red);
-      border-color: var(--red);
+    .section {
+      margin-top: 22px;
+      scroll-margin-top: 90px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
-      gap: 16px;
+      gap: 14px;
     }
 
-    .card {
-      padding: 18px;
-    }
-
+    .card { padding: 18px; }
     .span-12 { grid-column: span 12; }
     .span-8 { grid-column: span 8; }
     .span-6 { grid-column: span 6; }
@@ -147,7 +137,7 @@
     .span-3 { grid-column: span 3; }
 
     .metric {
-      min-height: 130px;
+      min-height: 128px;
       display: grid;
       align-content: center;
     }
@@ -177,7 +167,7 @@
     }
 
     .profit-hero span { color: rgba(255,255,255,0.72); }
-    .profit-hero b { color: var(--gold); font-size: clamp(44px, 7vw, 86px); }
+    .profit-hero b { color: var(--gold); font-size: clamp(44px, 7vw, 88px); }
 
     label {
       display: grid;
@@ -201,30 +191,64 @@
       font-weight: 750;
     }
 
-    textarea { min-height: 72px; resize: vertical; }
+    input[type="range"] { accent-color: var(--green); padding: 0; }
+    textarea { min-height: 70px; resize: vertical; }
 
     .inputs {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
     }
 
-    .quick {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 10px;
+    .split-control {
+      display: grid;
+      grid-template-columns: 1fr 96px;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .share-readout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .share-readout div,
+    .note {
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(38, 50, 56, 0.1);
+      color: #3c4853;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .share-readout b { color: var(--green); font-size: 22px; }
+
+    .recommendation {
+      border-left: 6px solid var(--green);
+      background: rgba(29,143,111,0.08);
+      color: #263238;
+      line-height: 1.58;
+    }
+
+    .recommendation.short {
+      border-left-color: var(--red);
+      background: rgba(240,93,94,0.08);
     }
 
     .service-table {
       width: 100%;
+      min-width: 980px;
       border-collapse: collapse;
       font-size: 13px;
     }
 
     .service-table th,
     .service-table td {
-      padding: 9px;
+      padding: 8px;
       border-bottom: 1px solid rgba(38, 50, 56, 0.1);
       text-align: left;
       vertical-align: top;
@@ -239,20 +263,20 @@
     .service-table input,
     .service-table select {
       min-height: 34px;
-      font-size: 12px;
       padding: 5px 7px;
+      font-size: 12px;
     }
 
     .scenario-grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(180px, 1fr));
+      grid-template-columns: repeat(5, minmax(190px, 1fr));
       gap: 12px;
       overflow-x: auto;
       padding-bottom: 8px;
     }
 
     .scenario {
-      min-width: 180px;
+      min-width: 190px;
       padding: 14px;
       border-radius: 8px;
       background: #fff;
@@ -262,39 +286,33 @@
     .scenario b {
       display: block;
       margin-top: 8px;
-      font-size: 26px;
       color: var(--green);
+      font-size: 26px;
+      line-height: 1;
     }
 
     .scenario.short b { color: var(--red); }
 
-    .recommendation {
-      border-left: 6px solid var(--green);
-      background: rgba(29,143,111,0.08);
-      color: #263238;
-      line-height: 1.55;
-    }
-
-    .recommendation.short {
-      border-left-color: var(--red);
-      background: rgba(240,93,94,0.08);
-    }
-
-    .actions {
+    .subnav {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
+      gap: 8px;
+      margin-top: 16px;
     }
 
-    .note {
+    .subnav a {
+      padding: 9px 12px;
+      border-radius: 999px;
       color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
+      background: #fff;
+      border: 1px solid var(--line);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 850;
     }
 
     @media print {
-      .topbar, .tabs, .actions, .login { display: none !important; }
+      .login, .topbar .actions, .subnav { display: none !important; }
       .app { width: 100%; padding: 0; }
       body { background: #fff; }
       .card { box-shadow: none; break-inside: avoid; }
@@ -302,7 +320,7 @@
 
     @media (max-width: 980px) {
       .span-8, .span-6, .span-4, .span-3 { grid-column: span 12; }
-      .inputs { grid-template-columns: 1fr; }
+      .inputs, .split-control, .share-readout { grid-template-columns: 1fr; }
       .topbar { align-items: flex-start; flex-direction: column; }
     }
   </style>
@@ -311,12 +329,12 @@
   <section class="login" id="loginScreen">
     <div class="login-card">
       <h2>Admin Login</h2>
-      <p class="note">This calculator is for Zah Brand Solutions negotiation planning. Static-page login is a light gate, not bank-level security.</p>
+      <p class="note">This negotiation dashboard is private planning support for Zah Brand Solutions. Static-page login is a light gate, not backend security.</p>
       <div class="inputs" style="grid-template-columns: 1fr;">
         <label>Email <input id="loginEmail" type="email" autocomplete="username"></label>
         <label>Password <input id="loginPassword" type="password" autocomplete="current-password"></label>
       </div>
-      <div class="actions">
+      <div class="actions" style="margin-top: 14px;">
         <button class="primary" id="loginButton">Login</button>
         <a href="proposal.html"><button type="button">Back to Proposal</button></a>
       </div>
@@ -327,8 +345,18 @@
   <main class="app hidden" id="app">
     <div class="topbar">
       <div>
-        <h1>Negotiation Calculator</h1>
-        <p class="lead">Model retainers, revenue splits, podcast upside, add-on service fees, and first-year income goals before accepting a compensation structure.</p>
+        <h1>Earnings Negotiation Tool</h1>
+        <p class="lead">Model reduced retainers, direct Work @ Wheel service fees, customer-service revenue splits, podcast splits, and first-year income goals.</p>
+        <nav class="subnav">
+          <a href="#scale">Earnings Scale</a>
+          <a href="#summary">Key Numbers</a>
+          <a href="#insights">Insights</a>
+          <a href="#retainer">Retainer</a>
+          <a href="#direct">Direct Fees</a>
+          <a href="#customer">Customer Split</a>
+          <a href="#podcast">Podcast Split</a>
+          <a href="#scenarios">Scenarios</a>
+        </nav>
       </div>
       <div class="actions">
         <button class="primary" id="saveScenario">Save Scenario</button>
@@ -337,26 +365,33 @@
       </div>
     </div>
 
-    <div class="tabs">
-      <button class="tab active" data-target="summary">Summary</button>
-      <button class="tab" data-target="retainer">Retainer</button>
-      <button class="tab" data-target="splits">Splits</button>
-      <button class="tab" data-target="services">Service Fees</button>
-      <button class="tab" data-target="scenarios">Scenarios</button>
-    </div>
+    <section class="section grid" id="scale">
+      <div class="card profit-hero metric span-8">
+        <span>Projected full-year Zah Brand Solutions earnings</span>
+        <b id="totalYear">$0</b>
+      </div>
+      <div class="card metric span-4" id="goalStatusCard">
+        <span>Goal status</span>
+        <b id="goalStatus">Short</b>
+      </div>
+    </section>
 
-    <section class="grid tab-panel" id="summary">
-      <div class="card profit-hero metric span-6"><span>Projected 12-month Zah Brand Solutions earnings</span><b id="total12">$0</b></div>
-      <div class="card metric span-3" id="goalStatusCard"><span>Goal status</span><b id="goalStatus">Short</b></div>
-      <div class="card metric span-3"><span>Gap to annual goal</span><b id="goalGap">$0</b></div>
+    <section class="section grid" id="summary">
       <div class="card metric span-3"><span>Annual income goal</span><b id="annualGoalDisplay">$100,000</b></div>
       <div class="card metric span-3"><span>Required monthly average</span><b id="requiredMonthly">$8,333</b></div>
-      <div class="card metric span-3"><span>Projected 6-month earnings</span><b id="total6">$0</b></div>
+      <div class="card metric span-3"><span>Phase 1 earnings</span><b id="phase1Total">$0</b></div>
+      <div class="card metric span-3"><span>Phase 2 earnings</span><b id="phase2Total">$0</b></div>
       <div class="card metric span-3"><span>Projected monthly average</span><b id="monthlyAverage">$0</b></div>
+      <div class="card metric span-3"><span>Gap to goal</span><b id="goalGap">$0</b></div>
+      <div class="card metric span-3"><span>Additional monthly needed</span><b id="neededMonthly">$0</b></div>
+      <div class="card metric span-3"><span>Total direct service fees</span><b id="directAnnual">$0</b></div>
+    </section>
+
+    <section class="section grid" id="insights">
       <div class="card recommendation span-12" id="recommendation"></div>
     </section>
 
-    <section class="grid tab-panel hidden" id="retainer">
+    <section class="section grid" id="retainer">
       <div class="card span-12">
         <h2>Retainer Calculator</h2>
         <div class="inputs">
@@ -370,53 +405,79 @@
       </div>
       <div class="card metric span-3 red"><span>Monthly shortfall from standard</span><b id="monthlyShortfall">$0</b></div>
       <div class="card metric span-3 red"><span>Total shortfall over term</span><b id="termShortfall">$0</b></div>
-      <div class="card metric span-3"><span>Retainer income over first 6 months</span><b id="retainer6">$21,000</b></div>
-      <div class="card metric span-3"><span>Retainer income over 12 months</span><b id="retainer12">$42,000</b></div>
+      <div class="card metric span-3"><span>Retainer income in Phase 1</span><b id="retainerPhase1">$21,000</b></div>
+      <div class="card metric span-3"><span>Retainer income over full year</span><b id="retainerFullYear">$42,000</b></div>
     </section>
 
-    <section class="grid tab-panel hidden" id="splits">
-      <div class="card span-6">
-        <h2>Zah Service Revenue Split</h2>
-        <div class="inputs">
-          <label>Total projected annual Zah service revenue <input id="serviceRevenue" type="number" value="60000" step="1000"></label>
-          <label>Zah split percentage <input id="serviceSplit" type="number" value="50" min="0" max="100"></label>
-        </div>
-        <div class="quick" data-fill="serviceSplit"><button>25%</button><button>30%</button><button>35%</button><button>40%</button><button>50%</button></div>
-      </div>
-      <div class="card span-6">
-        <h2>Podcast Revenue Split</h2>
-        <div class="inputs">
-          <label>Monthly podcast/studio revenue <input id="podcastRevenue" type="number" value="3500" step="100"></label>
-          <label>Zah podcast percentage <input id="podcastSplit" type="number" value="25" min="0" max="100"></label>
-          <label>Months projected <input id="podcastMonths" type="number" value="12" min="1" max="12"></label>
-        </div>
-        <div class="quick" data-fill="podcastSplit"><button>10%</button><button>15%</button><button>20%</button><button>25%</button><button>30%</button><button>40%</button></div>
-      </div>
-      <div class="card metric span-3"><span>Zah service split earnings</span><b id="serviceZah">$30,000</b></div>
-      <div class="card metric span-3"><span>Work @ Wheel service earnings</span><b id="serviceWork">$30,000</b></div>
-      <div class="card metric span-3"><span>Zah podcast monthly earnings</span><b id="podcastZahMonthly">$875</b></div>
-      <div class="card metric span-3"><span>Work @ Wheel retained podcast revenue</span><b id="podcastWork">$31,500</b></div>
-    </section>
-
-    <section class="grid tab-panel hidden" id="services">
+    <section class="section grid" id="direct">
       <div class="card span-12">
-        <h2>Standard Service Fee Calculator</h2>
-        <div style="overflow-x:auto;">
+        <h2>Direct Work @ Wheel Service Fees</h2>
+        <p class="note">This applies when Work @ Wheel directly hires Zah Brand Solutions to perform work for Work @ Wheel itself. These fees are paid directly and are not split unless intentionally marked as split revenue.</p>
+        <div style="overflow-x:auto; margin-top: 14px;">
           <table class="service-table">
-            <thead><tr><th>Use</th><th>Service</th><th>Qty</th><th>Unit Price</th><th>Frequency</th><th>Notes</th></tr></thead>
+            <thead><tr><th>Use</th><th>Service</th><th>Qty</th><th>Unit</th><th>Frequency</th><th>Phase 1</th><th>Phase 2</th><th>Notes</th></tr></thead>
             <tbody id="serviceRows"></tbody>
           </table>
         </div>
-        <div class="actions"><button id="addService">Add Service</button></div>
+        <div class="actions" style="margin-top: 12px;"><button id="addService">Add Service</button></div>
       </div>
-      <div class="card metric span-4"><span>One-time service total</span><b id="oneTimeTotal">$0</b></div>
-      <div class="card metric span-4"><span>Monthly recurring total</span><b id="monthlyServiceTotal">$0</b></div>
-      <div class="card metric span-4"><span>Annualized service total</span><b id="annualServiceTotal">$0</b></div>
+      <div class="card metric span-4"><span>Direct fees during Phase 1</span><b id="directPhase1">$0</b></div>
+      <div class="card metric span-4"><span>Direct fees during Phase 2</span><b id="directPhase2">$0</b></div>
+      <div class="card metric span-4"><span>Annual direct service fees</span><b id="directAnnual2">$0</b></div>
     </section>
 
-    <section class="grid tab-panel hidden" id="scenarios">
+    <section class="section grid" id="customer">
+      <div class="card span-8">
+        <h2>Work @ Wheel Customer Revenue Split</h2>
+        <p class="note">This applies to revenue generated from services sold to Work @ Wheel customers, such as websites, logos, branding, funnels, and marketing services.</p>
+        <div class="inputs" style="margin-top: 14px;">
+          <label>Projected total customer service revenue <input id="customerRevenue" type="number" value="60000" step="1000"></label>
+          <label>Projected months active <input id="customerMonths" type="number" value="6" min="1" max="12"></label>
+          <label>Optional average project value <input id="averageProject" type="number" value="1500" step="100"></label>
+          <label>Optional customer projects per month <input id="projectsPerMonth" type="number" value="4" step="1"></label>
+        </div>
+        <div class="split-control" style="margin-top: 14px;">
+          <label>Zah Brand Solutions Share <input id="customerSplit" type="range" min="15" max="100" step="1" value="50"></label>
+          <label>Manual % <input id="customerSplitNumber" type="number" min="15" max="100" value="50"></label>
+        </div>
+        <div class="share-readout">
+          <div>Zah Brand Solutions: <b id="customerZahPct">50%</b></div>
+          <div>Work @ Wheel: <b id="customerWorkPct">50%</b></div>
+        </div>
+      </div>
+      <div class="card metric span-4"><span>Phase 2 projected Zah earnings</span><b id="customerPhase2">$0</b></div>
+      <div class="card metric span-3"><span>Total customer service revenue</span><b id="customerGross">$0</b></div>
+      <div class="card metric span-3"><span>Zah customer-service share</span><b id="customerZah">$0</b></div>
+      <div class="card metric span-3"><span>Work @ Wheel customer-service share</span><b id="customerWork">$0</b></div>
+      <div class="card metric span-3"><span>Monthly projected Zah earnings</span><b id="customerMonthly">$0</b></div>
+    </section>
+
+    <section class="section grid" id="podcast">
+      <div class="card span-8">
+        <h2>Podcast / Studio Revenue Split</h2>
+        <p class="note">This models podcast/studio revenue where Work @ Wheel may provide space, equipment, and employees while Zah provides strategy, systems, marketing, management, monetization, and operational structure.</p>
+        <div class="inputs" style="margin-top: 14px;">
+          <label>Monthly podcast/studio revenue <input id="podcastRevenue" type="number" value="3500" step="100"></label>
+          <label>Months projected <input id="podcastMonths" type="number" value="6" min="1" max="12"></label>
+        </div>
+        <div class="split-control" style="margin-top: 14px;">
+          <label>Zah Brand Solutions Share <input id="podcastSplit" type="range" min="15" max="100" step="1" value="25"></label>
+          <label>Manual % <input id="podcastSplitNumber" type="number" min="15" max="100" value="25"></label>
+        </div>
+        <div class="share-readout">
+          <div>Zah Brand Solutions: <b id="podcastZahPct">25%</b></div>
+          <div>Work @ Wheel: <b id="podcastWorkPct">75%</b></div>
+        </div>
+      </div>
+      <div class="card metric span-4"><span>Zah podcast/studio earnings</span><b id="podcastZah">$0</b></div>
+      <div class="card metric span-4"><span>Zah monthly podcast earnings</span><b id="podcastZahMonthly">$0</b></div>
+      <div class="card metric span-4"><span>Work @ Wheel retained podcast revenue</span><b id="podcastWork">$0</b></div>
+      <div class="card metric span-4"><span>Total podcast/studio revenue</span><b id="podcastGross">$0</b></div>
+    </section>
+
+    <section class="section grid" id="scenarios">
       <div class="card span-12">
-        <h2>Scenario Comparison</h2>
+        <h2>Saved Scenarios</h2>
         <div class="scenario-grid" id="scenarioGrid"></div>
       </div>
     </section>
@@ -426,24 +487,24 @@
     const adminHash = "9a7b69ae3b4f25ee9dfef13ea33d47f427569cf786a9282d942a7d78c2de5c4b";
     const $ = id => document.getElementById(id);
     const money = value => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(Number(value) || 0);
-    const storageKey = "zah-negotiation-tool-v1";
-    const scenarioKey = "zah-negotiation-scenarios-v1";
+    const storageKey = "zah-negotiation-tool-v2";
+    const scenarioKey = "zah-negotiation-scenarios-v2";
+    const inputIds = ["annualGoal","standardRetainer","proposedRetainer","retainerMonths","secondRetainer","scenarioName","customerRevenue","customerMonths","averageProject","projectsPerMonth","customerSplit","customerSplitNumber","podcastRevenue","podcastMonths","podcastSplit","podcastSplitNumber"];
     const serviceDefaults = [
-      ["Ad Management", 1, 750, "monthly", "Campaign management only; ad spend separate."],
-      ["Meta Ads Setup", 1, 500, "one-time", "Pixel, events, campaign setup."],
-      ["Google Ads Setup", 1, 650, "one-time", "Account and campaign setup."],
-      ["Content Creation", 1, 900, "monthly", "Batch content package."],
-      ["Social Media Management", 1, 1200, "monthly", "Posting and community support."],
-      ["Funnel Creation", 1, 2500, "one-time", "Build scoped separately."],
-      ["Landing Page Creation", 1, 1200, "one-time", "Single landing page."],
-      ["Email/SMS Campaigns", 1, 500, "monthly", "Campaign calendar and deployment."],
-      ["Website Updates", 1, 450, "monthly", "Maintenance and small updates."],
-      ["Strategy Consulting", 2, 175, "monthly", "Hourly strategic support."],
-      ["Reporting / Analytics", 1, 350, "monthly", "Monthly reporting setup/review."],
-      ["Podcast Marketing Support", 1, 650, "monthly", "Clips, promotion, distribution strategy."],
-      ["CRM / Automation Setup", 1, 1800, "one-time", "Workflow and CRM implementation."]
+      ["Ad Management", 1, 750, "monthly", true, true, "Campaign management only; ad spend separate."],
+      ["Meta Ads Setup", 1, 500, "one-time", true, false, "Pixel, events, campaign setup."],
+      ["Google Ads Setup", 1, 650, "one-time", true, false, "Account and campaign setup."],
+      ["Content Creation", 1, 900, "monthly", true, true, "Batch content package."],
+      ["Social Media Management", 1, 1200, "monthly", false, true, "Posting and community support."],
+      ["Funnel Creation", 1, 2500, "one-time", false, true, "Build scoped separately."],
+      ["Landing Page Creation", 1, 1200, "one-time", false, true, "Single landing page."],
+      ["Email/SMS Campaigns", 1, 500, "monthly", false, true, "Campaign calendar and deployment."],
+      ["Website Updates", 1, 450, "monthly", true, true, "Maintenance and small updates."],
+      ["Strategy Consulting", 2, 175, "monthly", true, true, "Hourly strategic support."],
+      ["Reporting / Analytics", 1, 350, "monthly", true, true, "Monthly reporting setup/review."],
+      ["Podcast Marketing Support", 1, 650, "monthly", false, true, "Clips, promotion, distribution strategy."],
+      ["CRM / Automation Setup", 1, 1800, "one-time", true, false, "Workflow and CRM implementation."]
     ];
-    const inputs = ["annualGoal","standardRetainer","proposedRetainer","retainerMonths","secondRetainer","scenarioName","serviceRevenue","serviceSplit","podcastRevenue","podcastSplit","podcastMonths"];
 
     async function hash(email, password) {
       const bytes = new TextEncoder().encode(`${email.trim().toLowerCase()}:${password}`);
@@ -464,17 +525,28 @@
       sessionStorage.setItem("proposal-admin-unlocked", "true");
       unlock();
     });
-
     if (sessionStorage.getItem("proposal-admin-unlocked") === "true") unlock();
 
-    document.querySelectorAll(".tab").forEach(tab => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t === tab));
-        document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.toggle("hidden", panel.id !== tab.dataset.target));
-      });
-    });
+    function clampPercent(value) {
+      return Math.max(15, Math.min(100, Number(value) || 15));
+    }
 
-    function renderServices(items = serviceDefaults.map(([name, qty, price, frequency, notes]) => ({ use: true, name, qty, price, frequency, notes }))) {
+    function syncSplit(source, target) {
+      const value = clampPercent($(source).value);
+      $(source).value = value;
+      $(target).value = value;
+    }
+
+    ["customerSplit","customerSplitNumber"].forEach(id => $(id).addEventListener("input", () => {
+      syncSplit(id, id === "customerSplit" ? "customerSplitNumber" : "customerSplit");
+      calculate();
+    }));
+    ["podcastSplit","podcastSplitNumber"].forEach(id => $(id).addEventListener("input", () => {
+      syncSplit(id, id === "podcastSplit" ? "podcastSplitNumber" : "podcastSplit");
+      calculate();
+    }));
+
+    function renderServices(items = serviceDefaults.map(([name, qty, price, frequency, phase1, phase2, notes]) => ({ use: true, name, qty, price, frequency, phase1, phase2, notes }))) {
       $("serviceRows").innerHTML = items.map((item, index) => `
         <tr>
           <td><input type="checkbox" data-service="use" data-index="${index}" ${item.use ? "checked" : ""}></td>
@@ -482,31 +554,39 @@
           <td><input data-service="qty" data-index="${index}" type="number" value="${item.qty}"></td>
           <td><input data-service="price" data-index="${index}" type="number" value="${item.price}"></td>
           <td><select data-service="frequency" data-index="${index}"><option ${item.frequency==="one-time"?"selected":""}>one-time</option><option ${item.frequency==="monthly"?"selected":""}>monthly</option><option ${item.frequency==="quarterly"?"selected":""}>quarterly</option></select></td>
+          <td><input type="checkbox" data-service="phase1" data-index="${index}" ${item.phase1 ? "checked" : ""}></td>
+          <td><input type="checkbox" data-service="phase2" data-index="${index}" ${item.phase2 ? "checked" : ""}></td>
           <td><input data-service="notes" data-index="${index}" value="${item.notes || ""}"></td>
         </tr>`).join("");
       $("serviceRows").querySelectorAll("input,select").forEach(input => input.addEventListener("input", calculate));
     }
 
     function getServices() {
-      const rows = [...$("serviceRows").querySelectorAll("tr")];
-      return rows.map((row, index) => ({
+      return [...$("serviceRows").querySelectorAll("tr")].map((row, index) => ({
         use: row.querySelector(`[data-service="use"][data-index="${index}"]`).checked,
         name: row.querySelector(`[data-service="name"][data-index="${index}"]`).value,
         qty: Number(row.querySelector(`[data-service="qty"][data-index="${index}"]`).value),
         price: Number(row.querySelector(`[data-service="price"][data-index="${index}"]`).value),
         frequency: row.querySelector(`[data-service="frequency"][data-index="${index}"]`).value,
+        phase1: row.querySelector(`[data-service="phase1"][data-index="${index}"]`).checked,
+        phase2: row.querySelector(`[data-service="phase2"][data-index="${index}"]`).checked,
         notes: row.querySelector(`[data-service="notes"][data-index="${index}"]`).value
       }));
     }
 
-    function serviceTotals() {
-      return getServices().filter(s => s.use).reduce((totals, s) => {
-        const amount = s.qty * s.price;
-        if (s.frequency === "one-time") totals.oneTime += amount;
-        if (s.frequency === "monthly") totals.monthly += amount;
-        if (s.frequency === "quarterly") totals.quarterly += amount;
+    function serviceValue(service, months) {
+      const amount = service.qty * service.price;
+      if (service.frequency === "one-time") return amount;
+      if (service.frequency === "monthly") return amount * months;
+      return amount * Math.ceil(months / 3);
+    }
+
+    function directTotals() {
+      return getServices().filter(s => s.use).reduce((totals, service) => {
+        if (service.phase1) totals.phase1 += serviceValue(service, 6);
+        if (service.phase2) totals.phase2 += serviceValue(service, 6);
         return totals;
-      }, { oneTime: 0, monthly: 0, quarterly: 0 });
+      }, { phase1: 0, phase2: 0 });
     }
 
     function calculate() {
@@ -515,66 +595,87 @@
       const proposed = Number($("proposedRetainer").value);
       const term = Number($("retainerMonths").value);
       const second = Number($("secondRetainer").value);
-      const retainer6 = proposed * Math.min(term, 6);
-      const retainer12 = (proposed * Math.min(term, 6)) + (second * Math.max(0, 12 - Math.min(term, 6)));
+      const phase1Retainer = proposed * Math.min(term, 6);
+      const fullYearRetainer = phase1Retainer + (second * 6);
       const shortMonthly = Math.max(0, standard - proposed);
       const shortTerm = shortMonthly * term;
 
-      const serviceRevenue = Number($("serviceRevenue").value);
-      const serviceSplit = Number($("serviceSplit").value) / 100;
-      const serviceZah = serviceRevenue * serviceSplit;
-      const serviceWork = serviceRevenue - serviceZah;
+      const direct = directTotals();
+      const directAnnual = direct.phase1 + direct.phase2;
 
-      const podcastRevenue = Number($("podcastRevenue").value);
-      const podcastSplit = Number($("podcastSplit").value) / 100;
-      const podcastMonths = Number($("podcastMonths").value);
-      const podcastZahMonthly = podcastRevenue * podcastSplit;
-      const podcastZahYear = podcastZahMonthly * podcastMonths;
-      const podcastWork = (podcastRevenue - podcastZahMonthly) * podcastMonths;
+      const customerGross = Number($("customerRevenue").value);
+      const customerMonths = Number($("customerMonths").value);
+      const customerSplit = clampPercent($("customerSplit").value) / 100;
+      const customerZah = customerGross * customerSplit;
+      const customerWork = customerGross - customerZah;
+      const customerMonthly = customerMonths ? customerZah / customerMonths : 0;
 
-      const svc = serviceTotals();
-      const annualServices = svc.oneTime + (svc.monthly * 12) + (svc.quarterly * 4);
-      const sixServices = svc.oneTime + (svc.monthly * 6) + (svc.quarterly * 2);
-      const total12 = retainer12 + serviceZah + podcastZahYear + annualServices;
-      const total6 = retainer6 + (serviceZah / 2) + (podcastZahMonthly * Math.min(6, podcastMonths)) + sixServices;
-      const gap = total12 - annualGoal;
-      const monthlyAverage = total12 / 12;
-      const neededMonthly = Math.max(0, (annualGoal - total12) / 12);
+      const podcastGross = Number($("podcastRevenue").value) * Number($("podcastMonths").value);
+      const podcastSplit = clampPercent($("podcastSplit").value) / 100;
+      const podcastZah = podcastGross * podcastSplit;
+      const podcastWork = podcastGross - podcastZah;
+      const podcastZahMonthly = Number($("podcastRevenue").value) * podcastSplit;
+
+      const phase1Total = phase1Retainer + direct.phase1;
+      const phase2Total = direct.phase2 + customerZah + podcastZah;
+      const fullYearTotal = phase1Total + phase2Total;
+      const gap = fullYearTotal - annualGoal;
+      const neededMonthly = Math.max(0, (annualGoal - fullYearTotal) / 12);
 
       $("annualGoalDisplay").textContent = money(annualGoal);
       $("requiredMonthly").textContent = money(annualGoal / 12);
-      $("total12").textContent = money(total12);
-      $("total6").textContent = money(total6);
+      $("totalYear").textContent = money(fullYearTotal);
+      $("phase1Total").textContent = money(phase1Total);
+      $("phase2Total").textContent = money(phase2Total);
+      $("monthlyAverage").textContent = money(fullYearTotal / 12);
       $("goalGap").textContent = money(Math.abs(gap));
       $("goalGap").closest(".metric").classList.toggle("red", gap < 0);
+      $("neededMonthly").textContent = money(neededMonthly);
       $("goalStatus").textContent = gap >= 0 ? "Met" : "Short";
       $("goalStatusCard").classList.toggle("red", gap < 0);
-      $("monthlyAverage").textContent = money(monthlyAverage);
 
       $("monthlyShortfall").textContent = money(shortMonthly);
       $("termShortfall").textContent = money(shortTerm);
-      $("retainer6").textContent = money(retainer6);
-      $("retainer12").textContent = money(retainer12);
-      $("serviceZah").textContent = money(serviceZah);
-      $("serviceWork").textContent = money(serviceWork);
+      $("retainerPhase1").textContent = money(phase1Retainer);
+      $("retainerFullYear").textContent = money(fullYearRetainer);
+
+      $("directPhase1").textContent = money(direct.phase1);
+      $("directPhase2").textContent = money(direct.phase2);
+      $("directAnnual").textContent = money(directAnnual);
+      $("directAnnual2").textContent = money(directAnnual);
+
+      $("customerZahPct").textContent = `${Math.round(customerSplit * 100)}%`;
+      $("customerWorkPct").textContent = `${100 - Math.round(customerSplit * 100)}%`;
+      $("customerGross").textContent = money(customerGross);
+      $("customerZah").textContent = money(customerZah);
+      $("customerWork").textContent = money(customerWork);
+      $("customerMonthly").textContent = money(customerMonthly);
+      $("customerPhase2").textContent = money(customerZah);
+
+      $("podcastZahPct").textContent = `${Math.round(podcastSplit * 100)}%`;
+      $("podcastWorkPct").textContent = `${100 - Math.round(podcastSplit * 100)}%`;
+      $("podcastZah").textContent = money(podcastZah);
       $("podcastZahMonthly").textContent = money(podcastZahMonthly);
       $("podcastWork").textContent = money(podcastWork);
-      $("oneTimeTotal").textContent = money(svc.oneTime);
-      $("monthlyServiceTotal").textContent = money(svc.monthly);
-      $("annualServiceTotal").textContent = money(annualServices);
+      $("podcastGross").textContent = money(podcastGross);
 
-      const rec = gap >= 0
-        ? `This scenario meets or exceeds the ${money(annualGoal)} goal by ${money(gap)}. You can negotiate from strength while keeping the service and podcast splits intact.`
-        : `This offer is below your ${money(annualGoal)} goal by ${money(Math.abs(gap))}. To make it work, you need about ${money(neededMonthly)} more per month, a higher revenue split, or additional scoped service fees. Because the retainer is reduced by ${money(shortMonthly)}/month, require percentage participation in implemented services during the retainer period.`;
-      $("recommendation").textContent = rec;
+      const insights = [];
+      if (shortMonthly > 0) insights.push(`The retainer is below the standard by ${money(shortMonthly)}/month, creating a ${money(shortTerm)} shortfall during the retainer term.`);
+      if (directAnnual <= 0) insights.push("Direct Work @ Wheel service fees are not currently included. If they need ads, content, marketing support, reporting, CRM, or automation, those should be billed separately.");
+      if (customerGross < 50000) insights.push(`Projected customer service revenue is currently ${money(customerGross)}. If this pipeline is low, the revenue split may not offset a reduced retainer.`);
+      if (customerSplit < 0.4) insights.push(`Customer service revenue is being split at ${Math.round(customerSplit * 100)}%. At the current projection, Zah Brand Solutions earns ${money(customerZah)} from customer projects.`);
+      if (podcastSplit < 0.25) insights.push(`Podcast/studio revenue is being split at ${Math.round(podcastSplit * 100)}%. Consider a higher podcast split if Zah is building the marketing, systems, monetization, and operating structure.`);
+      if (gap < 0) insights.push(`To reach the annual goal, you need either ${money(neededMonthly)} more per month, a higher customer service split, more customer project volume, direct Work @ Wheel service fees, or a higher podcast split.`);
+      if (gap >= 0) insights.push(`This scenario meets or exceeds the ${money(annualGoal)} annual goal by ${money(gap)}.`);
+      $("recommendation").innerHTML = insights.map(text => `<p>${text}</p>`).join("");
       $("recommendation").classList.toggle("short", gap < 0);
 
       saveState();
-      renderScenarios(total12);
+      renderScenarios(fullYearTotal);
     }
 
     function currentState() {
-      const state = Object.fromEntries(inputs.map(id => [id, $(id).value]));
+      const state = Object.fromEntries(inputIds.map(id => [id, $(id).value]));
       state.services = getServices();
       return state;
     }
@@ -585,19 +686,21 @@
 
     function load() {
       const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
-      if (saved) inputs.forEach(id => { if (saved[id] !== undefined) $(id).value = saved[id]; });
+      if (saved) inputIds.forEach(id => { if (saved[id] !== undefined) $(id).value = saved[id]; });
       renderServices(saved?.services);
+      syncSplit("customerSplit", "customerSplitNumber");
+      syncSplit("podcastSplit", "podcastSplitNumber");
     }
 
-    function scenarioFromCurrent(total12) {
+    function scenarioFromCurrent(total) {
       return {
         name: $("scenarioName").value || "Custom Scenario",
         retainer: $("proposedRetainer").value,
         term: $("retainerMonths").value,
-        serviceSplit: $("serviceSplit").value,
+        customerSplit: $("customerSplit").value,
         podcastSplit: $("podcastSplit").value,
-        services: $("annualServiceTotal").textContent,
-        total12
+        directFees: $("directAnnual").textContent,
+        total
       };
     }
 
@@ -605,26 +708,25 @@
       const goal = Number($("annualGoal").value);
       const saved = JSON.parse(localStorage.getItem(scenarioKey) || "[]");
       const examples = [
-        { name: "Full Retainer Only", retainer: 3500, term: 12, serviceSplit: 0, podcastSplit: 0, services: "$0", total12: 42000 },
-        { name: "Reduced + 50% Service Split", retainer: 2100, term: 6, serviceSplit: 50, podcastSplit: 0, services: "$0", total12: 55200 },
-        { name: "Reduced + 30% Service Split", retainer: 2100, term: 6, serviceSplit: 30, podcastSplit: 0, services: "$0", total12: 43200 },
-        { name: "Low Retainer + Podcast + Fees", retainer: 1500, term: 6, serviceSplit: 35, podcastSplit: 25, services: "$18,000", total12: 66000 },
+        { name: "Full Retainer Only", retainer: 3500, term: 12, customerSplit: 0, podcastSplit: 0, directFees: "$0", total: 42000 },
+        { name: "Reduced Retainer + 50% Customer Split", retainer: 2100, term: 6, customerSplit: 50, podcastSplit: 0, directFees: "$0", total: 55200 },
+        { name: "Reduced Retainer + 30% Customer Split", retainer: 2100, term: 6, customerSplit: 30, podcastSplit: 0, directFees: "$0", total: 43200 },
+        { name: "Low Retainer + Podcast + Direct Fees", retainer: 1500, term: 6, customerSplit: 35, podcastSplit: 25, directFees: "$18,000", total: 66000 },
         scenarioFromCurrent(currentTotal)
       ];
-      const all = [...examples, ...saved];
-      $("scenarioGrid").innerHTML = all.map(s => `<div class="scenario ${s.total12 >= goal ? "" : "short"}"><strong>${s.name}</strong><span>Retainer: ${money(s.retainer)}/mo</span><br><span>Term: ${s.term} mo</span><br><span>Service split: ${s.serviceSplit}%</span><br><span>Podcast split: ${s.podcastSplit}%</span><br><span>Service fees: ${s.services}</span><b>${money(s.total12)}</b><span>${s.total12 >= goal ? "Goal met" : "Below goal"}</span></div>`).join("");
+      $("scenarioGrid").innerHTML = [...examples, ...saved].map(s => `<div class="scenario ${s.total >= goal ? "" : "short"}"><strong>${s.name}</strong><span>Retainer: ${money(s.retainer)}/mo</span><br><span>Term: ${s.term} mo</span><br><span>Customer split: ${s.customerSplit}%</span><br><span>Podcast split: ${s.podcastSplit}%</span><br><span>Direct fees: ${s.directFees}</span><b>${money(s.total)}</b><span>${s.total >= goal ? "Goal met" : "Below goal"}</span></div>`).join("");
     }
 
-    document.querySelectorAll("input,select,textarea").forEach(input => input.addEventListener("input", calculate));
-    document.querySelectorAll(".quick").forEach(group => group.addEventListener("click", event => {
-      if (event.target.tagName !== "BUTTON") return;
-      $(group.dataset.fill).value = event.target.textContent.replace("%", "");
+    document.addEventListener("input", event => {
+      if (event.target.matches("input,select,textarea")) calculate();
+    });
+    $("addService").addEventListener("click", () => {
+      renderServices([...getServices(), { use: true, name: "Custom Service", qty: 1, price: 500, frequency: "one-time", phase1: true, phase2: false, notes: "" }]);
       calculate();
-    }));
-    $("addService").addEventListener("click", () => { renderServices([...getServices(), { use: true, name: "Custom Service", qty: 1, price: 500, frequency: "one-time", notes: "" }]); calculate(); });
+    });
     $("saveScenario").addEventListener("click", () => {
       const saved = JSON.parse(localStorage.getItem(scenarioKey) || "[]");
-      saved.push(scenarioFromCurrent(Number($("total12").textContent.replace(/[$,]/g, ""))));
+      saved.push(scenarioFromCurrent(Number($("totalYear").textContent.replace(/[$,]/g, ""))));
       localStorage.setItem(scenarioKey, JSON.stringify(saved));
       calculate();
     });
