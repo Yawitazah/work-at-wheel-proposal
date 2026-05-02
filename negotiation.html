@@ -73,9 +73,10 @@
 
     .sticky-goal {
       position: sticky;
-      top: 128px;
+      top: 116px;
       z-index: 4;
-      margin-top: 14px;
+      margin-top: 10px;
+      margin-bottom: 14px;
     }
 
     h1, h2, h3, p { margin-top: 0; }
@@ -184,6 +185,7 @@
       color: #fff;
       background: var(--charcoal);
       overflow: hidden;
+      padding: 14px 18px;
     }
 
     .goal-head {
@@ -191,7 +193,7 @@
       justify-content: space-between;
       gap: 18px;
       align-items: end;
-      margin-bottom: 22px;
+      margin-bottom: 10px;
     }
 
     .goal-head span {
@@ -204,13 +206,13 @@
       display: block;
       margin-top: 8px;
       color: var(--gold);
-      font-size: clamp(48px, 8vw, 100px);
-      line-height: 0.92;
+      font-size: clamp(28px, 4vw, 52px);
+      line-height: 0.96;
     }
 
     .goal-track {
       position: relative;
-      height: 34px;
+      height: 18px;
       border-radius: 999px;
       background: rgba(255,255,255,0.14);
       overflow: visible;
@@ -231,13 +233,13 @@
       top: -7px;
       left: 50%;
       width: 2px;
-      height: 48px;
+      height: 32px;
       background: rgba(255,255,255,0.84);
     }
 
     .goal-marker span {
       position: absolute;
-      top: -26px;
+      top: -22px;
       left: 50%;
       transform: translateX(-50%);
       color: rgba(255,255,255,0.76);
@@ -270,7 +272,7 @@
       display: flex;
       justify-content: space-between;
       gap: 16px;
-      margin-top: 14px;
+      margin-top: 8px;
       color: rgba(255,255,255,0.72);
       font-size: 12px;
       font-weight: 800;
@@ -455,7 +457,7 @@
       .span-8, .span-6, .span-4, .span-3 { grid-column: span 12; }
       .inputs, .split-control, .share-readout { grid-template-columns: 1fr; }
       .topbar { align-items: flex-start; flex-direction: column; }
-      .sticky-goal { top: 176px; }
+      .sticky-goal { top: 168px; }
     }
   </style>
 </head>
@@ -486,8 +488,7 @@
           <a href="#insights" data-page="insightsPage">Insights</a>
           <a href="#retainer" data-page="retainerPage">Retainer</a>
           <a href="#direct" data-page="directPage">Direct Fees</a>
-          <a href="#customer" data-page="customerPage">Customer Split</a>
-          <a href="#podcast" data-page="podcastPage">Podcast Split</a>
+          <a href="#splits" data-page="splitsPage">Splits</a>
           <a href="#scenarios" data-page="scenariosPage">Scenarios</a>
         </nav>
       </div>
@@ -583,7 +584,7 @@
       <div class="card metric span-4"><span>Annual direct service fees</span><b id="directAnnual2">$0</b></div>
     </section>
 
-    <section class="section grid page-panel hidden" id="customerPage">
+    <section class="section grid page-panel hidden" id="splitsPage">
       <div class="card span-8">
         <h2>Work @ Wheel Customer Revenue Split</h2>
         <p class="note">This applies to revenue generated from services sold to Work @ Wheel customers, such as websites, logos, branding, funnels, and marketing services.</p>
@@ -607,9 +608,6 @@
       <div class="card metric span-3"><span>Zah customer-service share</span><b id="customerZah">$0</b></div>
       <div class="card metric span-3"><span>Work @ Wheel customer-service share</span><b id="customerWork">$0</b></div>
       <div class="card metric span-3"><span>Monthly projected Zah earnings</span><b id="customerMonthly">$0</b></div>
-    </section>
-
-    <section class="section grid page-panel hidden" id="podcastPage">
       <div class="card span-8">
         <h2>Podcast / Studio Revenue Split</h2>
         <p class="note">This models podcast/studio revenue where Work @ Wheel may provide space, equipment, and employees while Zah provides strategy, systems, marketing, management, monetization, and operational structure.</p>
