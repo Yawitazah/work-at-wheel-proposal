@@ -98,6 +98,42 @@
       display: none;
     }
 
+    .editor-menu {
+      position: fixed;
+      right: 40px;
+      bottom: 22px;
+      z-index: 32;
+      display: grid;
+      gap: 8px;
+      width: 150px;
+      padding: 10px;
+      border: 1px solid rgba(38, 50, 56, 0.14);
+      border-radius: 8px;
+      background: rgba(255, 253, 248, 0.94);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .editor-menu.hidden {
+      display: none;
+    }
+
+    .editor-menu button {
+      min-height: 36px;
+      border: 1px solid rgba(38, 50, 56, 0.16);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .editor-menu button:hover {
+      background: rgba(29, 143, 111, 0.1);
+    }
+
     .editor-toggle {
       position: fixed;
       right: 0;
@@ -200,6 +236,17 @@
     [contenteditable="true"]:focus {
       outline-color: var(--green);
       background: rgba(255, 255, 255, 0.46);
+    }
+
+    body:not(.editing-enabled) [contenteditable="true"] {
+      cursor: inherit;
+      outline: 0;
+    }
+
+    body:not(.editing-enabled) [contenteditable="true"]:hover,
+    body:not(.editing-enabled) [contenteditable="true"]:focus {
+      outline: 0;
+      background: transparent;
     }
 
     .section {
@@ -1356,6 +1403,10 @@
         right: 0;
         bottom: 18px;
       }
+      .editor-menu {
+        right: 38px;
+        bottom: 18px;
+      }
       .hero .wrap { padding-bottom: 4vh; }
       .timeline,
       .services,
@@ -1400,6 +1451,7 @@
   <div class="progress" aria-hidden="true"></div>
 
   <div class="editor-toolbar hidden" aria-label="Text editing controls">
+    <button type="button" id="doneEditing">Done</button>
     <button type="button" id="saveEdits">Save</button>
     <button type="button" id="undoEdit">Undo</button>
     <button type="button" id="resetEdits">Reset</button>
@@ -1410,6 +1462,10 @@
       <button type="button" id="increaseSize" title="Increase text size" aria-label="Increase text size">+</button>
     </div>
     <span class="save-status" id="saveStatus">Editable</span>
+  </div>
+  <div class="editor-menu hidden" id="editorMenu" aria-label="Private controls">
+    <button type="button" id="startEditing">Edit</button>
+    <button type="button" id="analyticsInfo">Tracking</button>
   </div>
   <button type="button" class="editor-toggle" id="toggleEditor" title="Show editor" aria-label="Show editor">✎</button>
 
@@ -1998,11 +2054,15 @@
     ].join(", ");
     const editableElements = [...document.querySelectorAll(editSelector)]
       .filter(element => !["result", "grossResult", "zahResult"].includes(element.id));
+    const doneEditing = document.getElementById("doneEditing");
     const saveButton = document.getElementById("saveEdits");
     const undoButton = document.getElementById("undoEdit");
     const resetButton = document.getElementById("resetEdits");
     const editorToolbar = document.querySelector(".editor-toolbar");
+    const editorMenu = document.getElementById("editorMenu");
     const toggleEditor = document.getElementById("toggleEditor");
+    const startEditing = document.getElementById("startEditing");
+    const analyticsInfo = document.getElementById("analyticsInfo");
     const textColor = document.getElementById("textColor");
     const textSize = document.getElementById("textSize");
     const decreaseSize = document.getElementById("decreaseSize");
@@ -2014,6 +2074,7 @@
     let defaultEditState = [];
     let logoDrag = null;
     let defaultPodcastModel = null;
+    let editingEnabled = false;
 
     function formatMoney(value) {
       return new Intl.NumberFormat("en-US", {
@@ -2067,8 +2128,6 @@
     function initializeEditor() {
       editableElements.forEach((element, index) => {
         element.dataset.editId = `editable-${index}`;
-        element.setAttribute("contenteditable", "true");
-        element.setAttribute("spellcheck", "true");
         element.addEventListener("focus", () => {
           activeEditable = element;
           textColor.value = rgbToHex(getComputedStyle(element).color);
@@ -2090,6 +2149,22 @@
       }
     }
 
+    function setEditingEnabled(enabled) {
+      editingEnabled = enabled;
+      document.body.classList.toggle("editing-enabled", enabled);
+      editableElements.forEach(element => {
+        if (enabled) {
+          element.setAttribute("contenteditable", "true");
+          element.setAttribute("spellcheck", "true");
+        } else {
+          element.removeAttribute("contenteditable");
+          element.removeAttribute("spellcheck");
+          if (document.activeElement === element) element.blur();
+        }
+      });
+      if (!enabled) activeEditable = null;
+    }
+
     function rgbToHex(color) {
       const match = color.match(/\d+/g);
       if (!match) return "#17202a";
@@ -2104,9 +2179,28 @@
     });
 
     toggleEditor.addEventListener("click", () => {
-      const isHidden = editorToolbar.classList.toggle("hidden");
-      toggleEditor.title = isHidden ? "Show editor" : "Hide editor";
-      toggleEditor.setAttribute("aria-label", isHidden ? "Show editor" : "Hide editor");
+      editorMenu.classList.toggle("hidden");
+    });
+
+    startEditing.addEventListener("click", () => {
+      setEditingEnabled(true);
+      editorMenu.classList.add("hidden");
+      editorToolbar.classList.remove("hidden");
+      toggleEditor.title = "Editing enabled";
+      toggleEditor.setAttribute("aria-label", "Editing enabled");
+      setStatus("Editing");
+    });
+
+    doneEditing.addEventListener("click", () => {
+      setEditingEnabled(false);
+      editorToolbar.classList.add("hidden");
+      toggleEditor.title = "Show editor";
+      toggleEditor.setAttribute("aria-label", "Show editor");
+    });
+
+    analyticsInfo.addEventListener("click", () => {
+      editorMenu.classList.add("hidden");
+      window.alert("Tracking needs an analytics service or backend. A static GitHub Pages file cannot securely collect private page/section views by itself.");
     });
 
     undoButton.addEventListener("click", () => {
