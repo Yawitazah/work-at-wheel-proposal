@@ -71,6 +71,13 @@
       backdrop-filter: blur(16px);
     }
 
+    .sticky-goal {
+      position: sticky;
+      top: 128px;
+      z-index: 4;
+      margin-top: 14px;
+    }
+
     h1, h2, h3, p { margin-top: 0; }
 
     h1 {
@@ -121,6 +128,10 @@
     .section {
       margin-top: 22px;
       scroll-margin-top: 90px;
+    }
+
+    .page-panel.hidden {
+      display: none;
     }
 
     .grid {
@@ -218,7 +229,7 @@
     .goal-marker {
       position: absolute;
       top: -7px;
-      left: 100%;
+      left: 50%;
       width: 2px;
       height: 48px;
       background: rgba(255,255,255,0.84);
@@ -427,6 +438,12 @@
       font-weight: 850;
     }
 
+    .subnav a.active {
+      color: #fff;
+      background: var(--green);
+      border-color: var(--green);
+    }
+
     @media print {
       .login, .topbar .actions, .subnav { display: none !important; }
       .app { width: 100%; padding: 0; }
@@ -438,6 +455,7 @@
       .span-8, .span-6, .span-4, .span-3 { grid-column: span 12; }
       .inputs, .split-control, .share-readout { grid-template-columns: 1fr; }
       .topbar { align-items: flex-start; flex-direction: column; }
+      .sticky-goal { top: 176px; }
     }
   </style>
 </head>
@@ -464,14 +482,13 @@
         <h1>Earnings Negotiation Tool</h1>
         <p class="lead">Model reduced retainers, direct Work @ Wheel service fees, customer-service revenue splits, podcast splits, and first-year income goals.</p>
         <nav class="subnav">
-          <a href="#scale">Earnings Scale</a>
-          <a href="#summary">Key Numbers</a>
-          <a href="#insights">Insights</a>
-          <a href="#retainer">Retainer</a>
-          <a href="#direct">Direct Fees</a>
-          <a href="#customer">Customer Split</a>
-          <a href="#podcast">Podcast Split</a>
-          <a href="#scenarios">Scenarios</a>
+          <a class="active" href="#summary" data-page="summaryPage">Key Numbers</a>
+          <a href="#insights" data-page="insightsPage">Insights</a>
+          <a href="#retainer" data-page="retainerPage">Retainer</a>
+          <a href="#direct" data-page="directPage">Direct Fees</a>
+          <a href="#customer" data-page="customerPage">Customer Split</a>
+          <a href="#podcast" data-page="podcastPage">Podcast Split</a>
+          <a href="#scenarios" data-page="scenariosPage">Scenarios</a>
         </nav>
       </div>
       <div class="actions">
@@ -481,7 +498,7 @@
       </div>
     </div>
 
-    <section class="section grid" id="scale">
+    <section class="section grid sticky-goal" id="scale">
       <div class="card goal-card span-12 glum" id="goalCard">
         <div class="goal-head">
           <div>
@@ -516,7 +533,7 @@
       </div>
     </section>
 
-    <section class="section grid" id="summary">
+    <section class="section grid page-panel" id="summaryPage">
       <div class="card metric span-3"><span>Annual income goal</span><b id="annualGoalDisplay">$100,000</b></div>
       <div class="card metric span-3"><span>Required monthly average</span><b id="requiredMonthly">$8,333</b></div>
       <div class="card metric span-3"><span>Phase 1 earnings</span><b id="phase1Total">$0</b></div>
@@ -527,11 +544,11 @@
       <div class="card metric span-3"><span>Total direct service fees</span><b id="directAnnual">$0</b></div>
     </section>
 
-    <section class="section grid" id="insights">
+    <section class="section grid page-panel hidden" id="insightsPage">
       <div class="card recommendation span-12" id="recommendation"></div>
     </section>
 
-    <section class="section grid" id="retainer">
+    <section class="section grid page-panel hidden" id="retainerPage">
       <div class="card span-12">
         <h2>Retainer Calculator</h2>
         <div class="inputs">
@@ -549,7 +566,7 @@
       <div class="card metric span-3"><span>Retainer income over full year</span><b id="retainerFullYear">$42,000</b></div>
     </section>
 
-    <section class="section grid" id="direct">
+    <section class="section grid page-panel hidden" id="directPage">
       <div class="card span-12">
         <h2>Direct Work @ Wheel Service Fees</h2>
         <p class="note">This applies when Work @ Wheel directly hires Zah Brand Solutions to perform work for Work @ Wheel itself. These fees are paid directly and are not split unless intentionally marked as split revenue.</p>
@@ -566,7 +583,7 @@
       <div class="card metric span-4"><span>Annual direct service fees</span><b id="directAnnual2">$0</b></div>
     </section>
 
-    <section class="section grid" id="customer">
+    <section class="section grid page-panel hidden" id="customerPage">
       <div class="card span-8">
         <h2>Work @ Wheel Customer Revenue Split</h2>
         <p class="note">This applies to revenue generated from services sold to Work @ Wheel customers, such as websites, logos, branding, funnels, and marketing services.</p>
@@ -592,7 +609,7 @@
       <div class="card metric span-3"><span>Monthly projected Zah earnings</span><b id="customerMonthly">$0</b></div>
     </section>
 
-    <section class="section grid" id="podcast">
+    <section class="section grid page-panel hidden" id="podcastPage">
       <div class="card span-8">
         <h2>Podcast / Studio Revenue Split</h2>
         <p class="note">This models podcast/studio revenue where Work @ Wheel may provide space, equipment, and employees while Zah provides strategy, systems, marketing, management, monetization, and operational structure.</p>
@@ -615,7 +632,7 @@
       <div class="card metric span-4"><span>Total podcast/studio revenue</span><b id="podcastGross">$0</b></div>
     </section>
 
-    <section class="section grid" id="scenarios">
+    <section class="section grid page-panel hidden" id="scenariosPage">
       <div class="card span-12">
         <h2>Saved Scenarios</h2>
         <div class="scenario-grid" id="scenarioGrid"></div>
@@ -778,7 +795,7 @@
       $("goalStatusCard").classList.toggle("red", gap < 0);
 
       const goalPercent = annualGoal ? (fullYearTotal / annualGoal) * 100 : 0;
-      const visualPercent = Math.min(180, Math.max(0, goalPercent));
+      const visualPercent = Math.min(100, Math.max(0, goalPercent / 2));
       $("goalFill").style.width = `${visualPercent}%`;
       $("goalPercent").textContent = `${Math.round(goalPercent)}% of goal`;
       const goalCard = $("goalCard");
@@ -892,6 +909,14 @@
 
     document.addEventListener("input", event => {
       if (event.target.matches("input,select,textarea")) calculate();
+    });
+    document.querySelectorAll(".subnav a[data-page]").forEach(link => {
+      link.addEventListener("click", event => {
+        event.preventDefault();
+        document.querySelectorAll(".subnav a[data-page]").forEach(item => item.classList.toggle("active", item === link));
+        document.querySelectorAll(".page-panel").forEach(panel => panel.classList.toggle("hidden", panel.id !== link.dataset.page));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
     });
     $("addService").addEventListener("click", () => {
       renderServices([...getServices(), { use: true, name: "Custom Service", qty: 1, price: 500, frequency: "one-time", phase1: true, phase2: false, notes: "" }]);
