@@ -134,6 +134,10 @@
       background: rgba(29, 143, 111, 0.1);
     }
 
+    .editor-menu .admin-only.hidden {
+      display: none;
+    }
+
     .editor-toggle {
       position: fixed;
       right: 0;
@@ -1464,8 +1468,9 @@
     <span class="save-status" id="saveStatus">Editable</span>
   </div>
   <div class="editor-menu hidden" id="editorMenu" aria-label="Private controls">
-    <button type="button" id="startEditing">Edit</button>
-    <button type="button" id="analyticsInfo">Tracking</button>
+    <button type="button" id="adminLogin">Admin</button>
+    <button type="button" class="admin-only hidden" id="startEditing">Edit</button>
+    <button type="button" class="admin-only hidden" id="analyticsInfo">Analytics</button>
   </div>
   <button type="button" class="editor-toggle" id="toggleEditor" title="Show editor" aria-label="Show editor">✎</button>
 
@@ -2061,8 +2066,10 @@
     const editorToolbar = document.querySelector(".editor-toolbar");
     const editorMenu = document.getElementById("editorMenu");
     const toggleEditor = document.getElementById("toggleEditor");
+    const adminLogin = document.getElementById("adminLogin");
     const startEditing = document.getElementById("startEditing");
     const analyticsInfo = document.getElementById("analyticsInfo");
+    const adminOnlyButtons = [...document.querySelectorAll(".admin-only")];
     const textColor = document.getElementById("textColor");
     const textSize = document.getElementById("textSize");
     const decreaseSize = document.getElementById("decreaseSize");
@@ -2075,6 +2082,8 @@
     let logoDrag = null;
     let defaultPodcastModel = null;
     let editingEnabled = false;
+    let adminUnlocked = sessionStorage.getItem("proposal-admin-unlocked") === "true";
+    const adminHash = "9a7b69ae3b4f25ee9dfef13ea33d47f427569cf786a9282d942a7d78c2de5c4b";
 
     function formatMoney(value) {
       return new Intl.NumberFormat("en-US", {
@@ -2165,6 +2174,18 @@
       if (!enabled) activeEditable = null;
     }
 
+    async function hashAdminCredentials(email, password) {
+      const normalized = `${email.trim().toLowerCase()}:${password}`;
+      const bytes = new TextEncoder().encode(normalized);
+      const digest = await crypto.subtle.digest("SHA-256", bytes);
+      return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    function updateAdminMenu() {
+      adminOnlyButtons.forEach(button => button.classList.toggle("hidden", !adminUnlocked));
+      adminLogin.textContent = adminUnlocked ? "Admin unlocked" : "Admin";
+    }
+
     function rgbToHex(color) {
       const match = color.match(/\d+/g);
       if (!match) return "#17202a";
@@ -2179,10 +2200,31 @@
     });
 
     toggleEditor.addEventListener("click", () => {
+      updateAdminMenu();
       editorMenu.classList.toggle("hidden");
     });
 
+    adminLogin.addEventListener("click", async () => {
+      if (adminUnlocked) {
+        window.alert("Admin is already unlocked for this browser session.");
+        return;
+      }
+      const email = window.prompt("Admin email");
+      if (!email) return;
+      const password = window.prompt("Admin password");
+      if (!password) return;
+      const submittedHash = await hashAdminCredentials(email, password);
+      if (submittedHash !== adminHash) {
+        window.alert("Admin login failed.");
+        return;
+      }
+      adminUnlocked = true;
+      sessionStorage.setItem("proposal-admin-unlocked", "true");
+      updateAdminMenu();
+    });
+
     startEditing.addEventListener("click", () => {
+      if (!adminUnlocked) return;
       setEditingEnabled(true);
       editorMenu.classList.add("hidden");
       editorToolbar.classList.remove("hidden");
@@ -2199,6 +2241,7 @@
     });
 
     analyticsInfo.addEventListener("click", () => {
+      if (!adminUnlocked) return;
       editorMenu.classList.add("hidden");
       window.alert("Tracking needs an analytics service or backend. A static GitHub Pages file cannot securely collect private page/section views by itself.");
     });
