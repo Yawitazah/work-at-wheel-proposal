@@ -1324,8 +1324,13 @@
       .scope-boundary,
       .portfolio-layout,
       .stat-grid,
-      .outcome-grid { grid-template-columns: 1fr 1fr; }
+      .outcome-grid,
+      .portfolio-grid { grid-template-columns: 1fr 1fr; }
       .portfolio-layout { grid-template-columns: 1fr; }
+      .linkedin-card {
+        position: static;
+        top: auto;
+      }
       .detail-grid { grid-template-columns: 1fr 1fr; }
       .outcome-topline { grid-template-columns: 1fr; }
       .calculator,
@@ -1362,6 +1367,9 @@
       .portfolio-layout,
       .stat-grid,
       .outcome-grid { grid-template-columns: 1fr; }
+      .portfolio-card div {
+        padding: 12px;
+      }
       .detail-grid { grid-template-columns: 1fr; }
       .podcast-service {
         grid-template-columns: 22px minmax(0, 1fr);
