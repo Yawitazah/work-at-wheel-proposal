@@ -748,6 +748,17 @@
       margin-top: 30px;
     }
 
+    .use-note {
+      margin: 0 0 18px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      color: #42505d;
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid rgba(38, 50, 56, 0.12);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
     .podcast-services {
       display: grid;
       gap: 10px;
@@ -966,6 +977,74 @@
       border: 1px solid rgba(38, 50, 56, 0.1);
       font-size: 12px;
       line-height: 1.55;
+    }
+
+    .portfolio-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: 22px;
+      align-items: start;
+      margin-top: 30px;
+    }
+
+    .linkedin-card {
+      padding: 24px;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--charcoal);
+      box-shadow: var(--shadow);
+    }
+
+    .linkedin-card p {
+      color: rgba(255,255,255,0.76);
+      line-height: 1.55;
+    }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .portfolio-card {
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid rgba(38, 50, 56, 0.12);
+      background: #fff;
+      text-decoration: none;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .portfolio-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 34px rgba(23, 32, 42, 0.12);
+    }
+
+    .portfolio-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #eef1f4;
+    }
+
+    .portfolio-card div {
+      padding: 14px;
+    }
+
+    .portfolio-card strong {
+      display: block;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+
+    .portfolio-card span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.4;
     }
 
     .close-box {
@@ -1216,8 +1295,10 @@
       .podcast-business,
       .commitments,
       .scope-boundary,
+      .portfolio-layout,
       .stat-grid,
       .outcome-grid { grid-template-columns: 1fr 1fr; }
+      .portfolio-layout { grid-template-columns: 1fr; }
       .detail-grid { grid-template-columns: 1fr 1fr; }
       .outcome-topline { grid-template-columns: 1fr; }
       .calculator,
@@ -1250,6 +1331,8 @@
       .podcast-business,
       .commitments,
       .scope-boundary,
+      .portfolio-grid,
+      .portfolio-layout,
       .stat-grid,
       .outcome-grid { grid-template-columns: 1fr; }
       .detail-grid { grid-template-columns: 1fr; }
@@ -1302,6 +1385,7 @@
     <a href="#growth">Growth</a>
     <a href="#services">Services</a>
     <a href="#podcast">Podcast</a>
+    <a href="#portfolio">Portfolio</a>
     <a href="#timeline">Timeline</a>
     <a href="#terms">Terms</a>
   </nav>
@@ -1524,6 +1608,7 @@
           <div class="panel-head">Podcast Revenue Calculator <span>Interactive</span></div>
           <div class="panel-body podcast-business">
             <div>
+              <p class="use-note"><strong>How to use it:</strong> select one podcast service type on the left, then adjust its rate if needed. Studio space with no equipment use is modeled as 100% Work @ Wheel revenue. Services using equipment, editing, live support, or engineer support split revenue based on the selected share settings.</p>
               <div class="podcast-services" aria-label="Podcast service options">
                 <label class="podcast-service">
                   <input type="radio" name="podcastService" value="studio" checked>
@@ -1641,6 +1726,71 @@
                 <div class="formula" id="podcastFormula">10 users x 2 sessions x $65 + one-time setup fees</div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gear-field" id="portfolio" style="--gear-size: 340px; --gear-color: var(--coral);">
+      <div class="wrap">
+        <p class="eyebrow fade-up">Portfolio + Proof</p>
+        <h2 class="fade-up">Real work across websites, systems, branding, and campaigns.</h2>
+        <p class="lead fade-up">Zah Brand Solutions brings practical experience building digital assets, branded experiences, automations, and marketing systems for a range of clients and project types.</p>
+        <div class="portfolio-layout fade-up">
+          <div class="linkedin-card">
+            <h3>Lorenzo White</h3>
+            <p>Founder and strategist behind Zah Brand Solutions, combining branding, marketing systems, AI tools, automation, web development, and growth strategy into practical business solutions.</p>
+            <a class="button" href="https://www.linkedin.com/in/lorenzowhite/" target="_blank" rel="noopener">View LinkedIn Profile</a>
+          </div>
+          <div class="portfolio-grid">
+            <a class="portfolio-card" href="https://askmskay.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Faskmskay.com?w=640" alt="Powered By AI website preview">
+              <div><strong>Powered By AI</strong><span>Create AI agents that keep users engaged, informed, and moving toward action.</span></div>
+            </a>
+            <a class="portfolio-card" href="https://mpihomes.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fmpihomes.com?w=640" alt="MPI Homes website preview">
+              <div><strong>Property Management</strong><span>Professional digital presence for property and housing-related services.</span></div>
+            </a>
+            <a class="portfolio-card" href="https://makinabrand.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fmakinabrand.com?w=640" alt="Makin A Brand website preview">
+              <div><strong>Reality TV?</strong><span>Audience-building funnels and promotion for casting and entertainment projects.</span></div>
+            </a>
+            <a class="portfolio-card" href="https://www.oaklandandtheworld.org" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.oaklandandtheworld.org?w=640" alt="Oakland and the World website preview">
+              <div><strong>Brand Identity</strong><span>Clear visual identity work for mission-driven and community-centered brands.</span></div>
+            </a>
+            <a class="portfolio-card" href="https://www.theblackpantherapartments.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.theblackpantherapartments.com?w=640" alt="The Black Panther Apartments website preview">
+              <div><strong>Application Processing</strong><span>Strategic website experience built to support secure user applications.</span></div>
+            </a>
+            <a class="portfolio-card" href="https://www.brandontjackson.love" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.brandontjackson.love?w=640" alt="Brandon T Jackson website preview">
+              <div><strong>Event Branding</strong><span>Memorable event experiences supported by clear brand presentation.</span></div>
+            </a>
+            <a class="portfolio-card" href="https://hbcbranddesign.wixsite.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fhbcbranddesign.wixsite.com?w=640" alt="HBC Brand Design website preview">
+              <div><strong>Product Packaging</strong><span>Logo, packaging, website, and digital marketing support for product brands.</span></div>
+            </a>
+            <a class="portfolio-card" href="https://wholesalenaturalbodycare.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwholesalenaturalbodycare.com?w=640" alt="Wholesale Natural Body Care website preview">
+              <div><strong>White Label Branding</strong><span>Large-scale brand management and launch support for body care products.</span></div>
+            </a>
+            <a class="portfolio-card" href="https://hebrewcare.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fhebrewcare.com?w=640" alt="Hebrew Care website preview">
+              <div><strong>Iconic Family Brand</strong><span>Voice, presence, and trust-building for a wholesome family brand.</span></div>
+            </a>
+            <a class="portfolio-card" href="https://berkslatinochamber.com" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fberkslatinochamber.com?w=640" alt="Berks Latino Chamber website preview">
+              <div><strong>Community Engagement</strong><span>On-brand messaging and content to keep local audiences informed.</span></div>
+            </a>
+            <a class="portfolio-card" href="https://palatinosjuntos.org" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fpalatinosjuntos.org?w=640" alt="PA Latinos Juntos website preview">
+              <div><strong>Multilanguage</strong><span>Culturally aligned communication across audiences and languages.</span></div>
+            </a>
+            <a class="portfolio-card" href="https://zahbrandsolutions.com/" target="_blank" rel="noopener">
+              <img src="https://s.wordpress.com/mshots/v1/https%3A%2F%2Fzahbrandsolutions.com?w=640" alt="Zah Brand Solutions website preview">
+              <div><strong>Strategic Marketing</strong><span>Systems, messaging, automation, AI tools, and full-funnel growth strategy.</span></div>
+            </a>
           </div>
         </div>
       </div>
@@ -1782,7 +1932,7 @@
     const navLinks = [...document.querySelectorAll(".nav a")];
     const sections = [...document.querySelectorAll(".section")];
     const revealTargets = [...document.querySelectorAll(".section, .fade-up")];
-    const editStorageKey = "work-at-wheel-proposal-edits-v5";
+    const editStorageKey = "work-at-wheel-proposal-edits-v6";
     const logoStorageKey = "work-at-wheel-proposal-logo-position-v1";
     const podcastStorageKey = "work-at-wheel-proposal-podcast-model-v1";
     const editSelector = [
@@ -1804,6 +1954,8 @@
       "main .price",
       "main small:not(.hint)",
       "main .result-metric span"
+      ,"main .portfolio-card strong"
+      ,"main .portfolio-card span"
     ].join(", ");
     const editableElements = [...document.querySelectorAll(editSelector)]
       .filter(element => !["result", "grossResult", "zahResult"].includes(element.id));
