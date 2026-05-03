@@ -268,6 +268,26 @@
       box-shadow: 0 0 42px rgba(60,109,240,0.48);
     }
 
+    .sticky-goal.is-compact {
+      gap: 8px;
+    }
+
+    .sticky-goal.is-compact .metric {
+      min-height: 50px;
+      padding: 8px 12px;
+      align-content: center;
+    }
+
+    .sticky-goal.is-compact .metric span {
+      font-size: 10px;
+      line-height: 1.1;
+    }
+
+    .sticky-goal.is-compact .metric b {
+      margin-top: 3px;
+      font-size: clamp(18px, 2vw, 24px);
+    }
+
     .goal-caption {
       display: flex;
       justify-content: space-between;
@@ -595,6 +615,8 @@
       <div class="card metric span-4"><span>Direct fees during Phase 1</span><b id="directPhase1">$0</b></div>
       <div class="card metric span-4"><span>Direct fees during Phase 2</span><b id="directPhase2">$0</b></div>
       <div class="card metric span-4"><span>Annual direct service fees</span><b id="directAnnual2">$0</b></div>
+      <div class="card metric span-6"><span>Selected one-time direct service fees</span><b id="directOneTime">$0</b></div>
+      <div class="card metric span-6"><span>Active monthly direct service total</span><b id="directMonthly">$0/mo</b></div>
     </section>
 
     <section class="section grid page-panel hidden" id="splitsPage">
@@ -762,8 +784,10 @@
       return getServices().filter(s => s.use).reduce((totals, service) => {
         if (service.phase1) totals.phase1 += serviceValue(service, 6);
         if (service.phase2) totals.phase2 += serviceValue(service, 6);
+        if (service.frequency === "one-time" && (service.phase1 || service.phase2)) totals.oneTime += service.qty * service.price;
+        if (service.frequency === "monthly" && (service.phase1 || service.phase2)) totals.monthly += service.qty * service.price;
         return totals;
-      }, { phase1: 0, phase2: 0 });
+      }, { phase1: 0, phase2: 0, oneTime: 0, monthly: 0 });
     }
 
     function calculate() {
@@ -853,6 +877,8 @@
       $("directPhase2").textContent = money(direct.phase2);
       $("directAnnual").textContent = money(directAnnual);
       $("directAnnual2").textContent = money(directAnnual);
+      $("directOneTime").textContent = money(direct.oneTime);
+      $("directMonthly").textContent = `${money(direct.monthly)}/mo`;
 
       $("customerZahPct").textContent = `${Math.round(customerSplit * 100)}%`;
       $("customerWorkPct").textContent = `${100 - Math.round(customerSplit * 100)}%`;
@@ -957,6 +983,9 @@
       if (event.target.id === "scenarioName") $("scenarioNameQuick").value = event.target.value;
       if (event.target.matches("input,select,textarea")) calculate();
     });
+    window.addEventListener("scroll", () => {
+      $("scale").classList.toggle("is-compact", window.scrollY > 130);
+    }, { passive: true });
     document.querySelectorAll(".subnav a[data-page]").forEach(link => {
       link.addEventListener("click", event => {
         event.preventDefault();
