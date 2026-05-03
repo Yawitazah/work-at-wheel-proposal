@@ -390,6 +390,19 @@
       border: 1px solid var(--line);
     }
 
+    .scenario.current {
+      border-color: rgba(29,143,111,0.38);
+      box-shadow: 0 12px 28px rgba(29,143,111,0.12);
+    }
+
+    .scenario-tools {
+      display: grid;
+      grid-template-columns: minmax(220px, 420px) 1fr;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+
     .scenario strong {
       display: block;
       min-height: 40px;
@@ -557,7 +570,7 @@
           <label>Standard monthly retainer <input id="standardRetainer" type="number" value="3500" step="100"></label>
           <label>Proposed monthly retainer <input id="proposedRetainer" type="number" value="3500" step="100"></label>
           <label>Retainer term months <input id="retainerMonths" type="number" value="6" min="1" max="12"></label>
-          <label>Months 7-12 retainer <input id="secondRetainer" type="number" value="3500" step="100"></label>
+          <label>Optional months 7-12 retainer <input id="secondRetainer" type="number" value="0" step="100"></label>
           <label>Scenario name <input id="scenarioName" type="text" value="Custom Scenario"></label>
         </div>
       </div>
@@ -593,6 +606,7 @@
           <label>Projected months active <input id="customerMonths" type="number" value="6" min="1" max="12"></label>
           <label>Optional average project value <input id="averageProject" type="number" value="1500" step="100"></label>
           <label>Optional customer projects per month <input id="projectsPerMonth" type="number" value="4" step="1"></label>
+          <label>Accept customer split during retainer? <select id="customerPhase1Split"><option value="no">No, Phase 2 only</option><option value="yes">Yes, during Phase 1 too</option></select></label>
         </div>
         <div class="split-control" style="margin-top: 14px;">
           <label>Zah Brand Solutions Share <input id="customerSplit" type="range" min="15" max="100" step="1" value="50"></label>
@@ -603,7 +617,8 @@
           <div>Work @ Wheel: <b id="customerWorkPct">50%</b></div>
         </div>
       </div>
-      <div class="card metric span-4"><span>Phase 2 projected Zah earnings</span><b id="customerPhase2">$0</b></div>
+      <div class="card metric span-4"><span>Customer split earnings during Phase 1</span><b id="customerPhase1">$0</b></div>
+      <div class="card metric span-4"><span>Customer split earnings during Phase 2</span><b id="customerPhase2">$0</b></div>
       <div class="card metric span-3"><span>Total customer service revenue</span><b id="customerGross">$0</b></div>
       <div class="card metric span-3"><span>Zah customer-service share</span><b id="customerZah">$0</b></div>
       <div class="card metric span-3"><span>Work @ Wheel customer-service share</span><b id="customerWork">$0</b></div>
@@ -614,6 +629,7 @@
         <div class="inputs" style="margin-top: 14px;">
           <label>Monthly podcast/studio revenue <input id="podcastRevenue" type="number" value="3500" step="100"></label>
           <label>Months projected <input id="podcastMonths" type="number" value="6" min="1" max="12"></label>
+          <label>Accept podcast split during retainer? <select id="podcastPhase1Split"><option value="no">No, Phase 2 only</option><option value="yes">Yes, during Phase 1 too</option></select></label>
         </div>
         <div class="split-control" style="margin-top: 14px;">
           <label>Zah Brand Solutions Share <input id="podcastSplit" type="range" min="15" max="100" step="1" value="25"></label>
@@ -624,15 +640,21 @@
           <div>Work @ Wheel: <b id="podcastWorkPct">75%</b></div>
         </div>
       </div>
-      <div class="card metric span-4"><span>Zah podcast/studio earnings</span><b id="podcastZah">$0</b></div>
-      <div class="card metric span-4"><span>Zah monthly podcast earnings</span><b id="podcastZahMonthly">$0</b></div>
-      <div class="card metric span-4"><span>Work @ Wheel retained podcast revenue</span><b id="podcastWork">$0</b></div>
-      <div class="card metric span-4"><span>Total podcast/studio revenue</span><b id="podcastGross">$0</b></div>
+      <div class="card metric span-3"><span>Zah podcast/studio earnings</span><b id="podcastZah">$0</b></div>
+      <div class="card metric span-3"><span>Zah monthly podcast earnings</span><b id="podcastZahMonthly">$0</b></div>
+      <div class="card metric span-3"><span>Podcast split earnings during Phase 1</span><b id="podcastPhase1">$0</b></div>
+      <div class="card metric span-3"><span>Podcast split earnings during Phase 2</span><b id="podcastPhase2">$0</b></div>
+      <div class="card metric span-6"><span>Work @ Wheel podcast revenue after Zah share</span><b id="podcastWork">$0</b></div>
+      <div class="card metric span-6"><span>Total podcast/studio revenue</span><b id="podcastGross">$0</b></div>
     </section>
 
     <section class="section grid page-panel hidden" id="scenariosPage">
       <div class="card span-12">
         <h2>Saved Scenarios</h2>
+        <div class="scenario-tools">
+          <label>Current custom scenario name <input id="scenarioNameQuick" type="text" value="Custom Scenario"></label>
+          <p class="note">Edit this name before saving so the live Custom Scenario card and saved scenario are easy to recognize.</p>
+        </div>
         <div class="scenario-grid" id="scenarioGrid"></div>
       </div>
     </section>
@@ -642,9 +664,9 @@
     const adminHash = "9a7b69ae3b4f25ee9dfef13ea33d47f427569cf786a9282d942a7d78c2de5c4b";
     const $ = id => document.getElementById(id);
     const money = value => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(Number(value) || 0);
-    const storageKey = "zah-negotiation-tool-v2";
-    const scenarioKey = "zah-negotiation-scenarios-v2";
-    const inputIds = ["annualGoal","standardRetainer","proposedRetainer","retainerMonths","secondRetainer","scenarioName","customerRevenue","customerMonths","averageProject","projectsPerMonth","customerSplit","customerSplitNumber","podcastRevenue","podcastMonths","podcastSplit","podcastSplitNumber"];
+    const storageKey = "zah-negotiation-tool-v3";
+    const scenarioKey = "zah-negotiation-scenarios-v3";
+    const inputIds = ["annualGoal","standardRetainer","proposedRetainer","retainerMonths","secondRetainer","scenarioName","customerRevenue","customerMonths","averageProject","projectsPerMonth","customerPhase1Split","customerSplit","customerSplitNumber","podcastRevenue","podcastMonths","podcastPhase1Split","podcastSplit","podcastSplitNumber"];
     const serviceDefaults = [
       ["Ad Management", 1, 750, "monthly", true, true, "Campaign management only; ad spend separate."],
       ["Meta Ads Setup", 1, 500, "one-time", true, false, "Pixel, events, campaign setup."],
@@ -751,7 +773,8 @@
       const term = Number($("retainerMonths").value);
       const second = Number($("secondRetainer").value);
       const phase1Retainer = proposed * Math.min(term, 6);
-      const fullYearRetainer = phase1Retainer + (second * 6);
+      const phase2Retainer = second * 6;
+      const fullYearRetainer = phase1Retainer + phase2Retainer;
       const shortMonthly = Math.max(0, standard - proposed);
       const shortTerm = shortMonthly * term;
 
@@ -764,15 +787,24 @@
       const customerZah = customerGross * customerSplit;
       const customerWork = customerGross - customerZah;
       const customerMonthly = customerMonths ? customerZah / customerMonths : 0;
+      const customerPhase1Months = $("customerPhase1Split").value === "yes" ? Math.min(6, customerMonths) : 0;
+      const customerPhase2Months = Math.min(6, Math.max(0, customerMonths - customerPhase1Months));
+      const customerPhase1Zah = customerMonthly * customerPhase1Months;
+      const customerPhase2Zah = customerMonthly * customerPhase2Months;
 
       const podcastGross = Number($("podcastRevenue").value) * Number($("podcastMonths").value);
       const podcastSplit = clampPercent($("podcastSplit").value) / 100;
       const podcastZah = podcastGross * podcastSplit;
       const podcastWork = podcastGross - podcastZah;
       const podcastZahMonthly = Number($("podcastRevenue").value) * podcastSplit;
+      const podcastMonths = Number($("podcastMonths").value);
+      const podcastPhase1Months = $("podcastPhase1Split").value === "yes" ? Math.min(6, podcastMonths) : 0;
+      const podcastPhase2Months = Math.min(6, Math.max(0, podcastMonths - podcastPhase1Months));
+      const podcastPhase1Zah = podcastZahMonthly * podcastPhase1Months;
+      const podcastPhase2Zah = podcastZahMonthly * podcastPhase2Months;
 
-      const phase1Total = phase1Retainer + direct.phase1;
-      const phase2Total = direct.phase2 + customerZah + podcastZah;
+      const phase1Total = phase1Retainer + direct.phase1 + customerPhase1Zah + podcastPhase1Zah;
+      const phase2Total = phase2Retainer + direct.phase2 + customerPhase2Zah + podcastPhase2Zah;
       const fullYearTotal = phase1Total + phase2Total;
       const gap = fullYearTotal - annualGoal;
       const neededMonthly = Math.max(0, (annualGoal - fullYearTotal) / 12);
@@ -828,20 +860,26 @@
       $("customerZah").textContent = money(customerZah);
       $("customerWork").textContent = money(customerWork);
       $("customerMonthly").textContent = money(customerMonthly);
-      $("customerPhase2").textContent = money(customerZah);
+      $("customerPhase1").textContent = money(customerPhase1Zah);
+      $("customerPhase2").textContent = money(customerPhase2Zah);
 
       $("podcastZahPct").textContent = `${Math.round(podcastSplit * 100)}%`;
       $("podcastWorkPct").textContent = `${100 - Math.round(podcastSplit * 100)}%`;
       $("podcastZah").textContent = money(podcastZah);
       $("podcastZahMonthly").textContent = money(podcastZahMonthly);
+      $("podcastPhase1").textContent = money(podcastPhase1Zah);
+      $("podcastPhase2").textContent = money(podcastPhase2Zah);
       $("podcastWork").textContent = money(podcastWork);
       $("podcastGross").textContent = money(podcastGross);
 
       const insights = [];
       if (shortMonthly > 0) insights.push(`The retainer is below the standard by ${money(shortMonthly)}/month, creating a ${money(shortTerm)} shortfall during the retainer term.`);
+      if (phase2Retainer <= 0) insights.push("Months 7-12 retainer is set to $0, so the second half of the year is relying on splits, direct service fees, or project revenue instead of guaranteed retainer income.");
       if (directAnnual <= 0) insights.push("Direct Work @ Wheel service fees are not currently included. If they need ads, content, marketing support, reporting, CRM, or automation, those should be billed separately.");
       if (customerGross < 50000) insights.push(`Projected customer service revenue is currently ${money(customerGross)}. If this pipeline is low, the revenue split may not offset a reduced retainer.`);
       if (customerSplit < 0.4) insights.push(`Customer service revenue is being split at ${Math.round(customerSplit * 100)}%. At the current projection, Zah Brand Solutions earns ${money(customerZah)} from customer projects.`);
+      if ($("customerPhase1Split").value === "no" && customerZah > 0) insights.push("Customer service split is currently Phase 2 only. If customer projects begin during the retainer period, decide whether Zah participates in that revenue during Phase 1.");
+      if ($("podcastPhase1Split").value === "no" && podcastZah > 0) insights.push("Podcast split is currently Phase 2 only. If Zah is building podcast systems during the retainer, consider whether the split should start during Phase 1.");
       if (podcastSplit < 0.25) insights.push(`Podcast/studio revenue is being split at ${Math.round(podcastSplit * 100)}%. Consider a higher podcast split if Zah is building the marketing, systems, monetization, and operating structure.`);
       if (gap < 0) insights.push(`To reach the annual goal, you need either ${money(neededMonthly)} more per month, a higher customer service split, more customer project volume, direct Work @ Wheel service fees, or a higher podcast split.`);
       if (gap >= 0) insights.push(`This scenario meets or exceeds the ${money(annualGoal)} annual goal by ${money(gap)}.`);
@@ -866,17 +904,22 @@
       const saved = JSON.parse(localStorage.getItem(storageKey) || "null");
       if (saved) inputIds.forEach(id => { if (saved[id] !== undefined) $(id).value = saved[id]; });
       renderServices(saved?.services);
+      $("scenarioNameQuick").value = $("scenarioName").value;
       syncSplit("customerSplit", "customerSplitNumber");
       syncSplit("podcastSplit", "podcastSplitNumber");
     }
 
     function scenarioFromCurrent(total) {
       return {
+        type: "current",
         name: $("scenarioName").value || "Custom Scenario",
         retainer: $("proposedRetainer").value,
         term: $("retainerMonths").value,
+        secondRetainer: $("secondRetainer").value,
         customerSplit: $("customerSplit").value,
         podcastSplit: $("podcastSplit").value,
+        customerPhase1: $("customerPhase1Split").value,
+        podcastPhase1: $("podcastPhase1Split").value,
         directFees: $("directAnnual").textContent,
         total
       };
@@ -886,19 +929,23 @@
       const goal = Number($("annualGoal").value);
       const saved = JSON.parse(localStorage.getItem(scenarioKey) || "[]");
       const examples = [
-        { name: "Full Retainer Only", retainer: 3500, term: 12, customerSplit: 0, podcastSplit: 0, directFees: "$0", total: 42000 },
-        { name: "Reduced Retainer + 50% Customer Split", retainer: 2100, term: 6, customerSplit: 50, podcastSplit: 0, directFees: "$0", total: 55200 },
-        { name: "Reduced Retainer + 30% Customer Split", retainer: 2100, term: 6, customerSplit: 30, podcastSplit: 0, directFees: "$0", total: 43200 },
-        { name: "Low Retainer + Podcast + Direct Fees", retainer: 1500, term: 6, customerSplit: 35, podcastSplit: 25, directFees: "$18,000", total: 66000 },
+        { name: "Full Retainer Only", retainer: 3500, term: 12, secondRetainer: 3500, customerSplit: 0, podcastSplit: 0, customerPhase1: "no", podcastPhase1: "no", directFees: "$0", total: 42000 },
+        { name: "Reduced Retainer + 50% Customer Split", retainer: 2100, term: 6, secondRetainer: 0, customerSplit: 50, podcastSplit: 0, customerPhase1: "no", podcastPhase1: "no", directFees: "$0", total: 55200 },
+        { name: "Reduced Retainer + 30% Customer Split", retainer: 2100, term: 6, secondRetainer: 0, customerSplit: 30, podcastSplit: 0, customerPhase1: "no", podcastPhase1: "no", directFees: "$0", total: 43200 },
+        { name: "Low Retainer + Podcast + Direct Fees", retainer: 1500, term: 6, secondRetainer: 0, customerSplit: 35, podcastSplit: 25, customerPhase1: "yes", podcastPhase1: "yes", directFees: "$18,000", total: 66000 },
         scenarioFromCurrent(currentTotal)
       ];
+      const splitTiming = value => value === "yes" ? "During + after retainer" : "After retainer only";
       $("scenarioGrid").innerHTML = [...examples, ...saved].map(s => `
-        <div class="scenario ${s.total >= goal ? "" : "short"}">
+        <div class="scenario ${s.type === "current" ? "current" : ""} ${s.total >= goal ? "" : "short"}">
           <strong>${s.name}</strong>
-          <div class="scenario-row"><span>Retainer</span><span>${money(s.retainer)}/mo</span></div>
-          <div class="scenario-row"><span>Term</span><span>${s.term} mo</span></div>
+          <div class="scenario-row"><span>Phase 1 retainer</span><span>${money(s.retainer)}/mo</span></div>
+          <div class="scenario-row"><span>Retainer term</span><span>${s.term} mo</span></div>
+          <div class="scenario-row"><span>Months 7-12 retainer</span><span>${money(s.secondRetainer || 0)}/mo</span></div>
           <div class="scenario-row"><span>Customer split</span><span>${s.customerSplit}%</span></div>
           <div class="scenario-row"><span>Podcast split</span><span>${s.podcastSplit}%</span></div>
+          <div class="scenario-row"><span>Customer split timing</span><span>${splitTiming(s.customerPhase1)}</span></div>
+          <div class="scenario-row"><span>Podcast split timing</span><span>${splitTiming(s.podcastPhase1)}</span></div>
           <div class="scenario-row"><span>Direct fees</span><span>${s.directFees}</span></div>
           <b>${money(s.total)}</b>
           <span>${s.total >= goal ? "Goal met" : "Below goal"}</span>
@@ -906,6 +953,8 @@
     }
 
     document.addEventListener("input", event => {
+      if (event.target.id === "scenarioNameQuick") $("scenarioName").value = event.target.value;
+      if (event.target.id === "scenarioName") $("scenarioNameQuick").value = event.target.value;
       if (event.target.matches("input,select,textarea")) calculate();
     });
     document.querySelectorAll(".subnav a[data-page]").forEach(link => {
@@ -922,7 +971,9 @@
     });
     $("saveScenario").addEventListener("click", () => {
       const saved = JSON.parse(localStorage.getItem(scenarioKey) || "[]");
-      saved.push(scenarioFromCurrent(Number($("totalYear").textContent.replace(/[$,]/g, ""))));
+      const scenario = scenarioFromCurrent(Number($("totalYear").textContent.replace(/[$,]/g, "")));
+      delete scenario.type;
+      saved.push(scenario);
       localStorage.setItem(scenarioKey, JSON.stringify(saved));
       calculate();
     });
