@@ -630,6 +630,7 @@
           <label>Optional customer projects per month <input id="projectsPerMonth" type="number" value="4" step="1"></label>
           <label>Accept customer split during retainer? <select id="customerPhase1Split"><option value="no">No, Phase 2 only</option><option value="yes">Yes, during Phase 1 too</option></select></label>
         </div>
+        <p class="note" style="margin-top: 12px;">If set to "No," the active months are modeled after the retainer. If set to "Yes," the same active-month projection is also counted during Phase 1.</p>
         <div class="split-control" style="margin-top: 14px;">
           <label>Zah Brand Solutions Share <input id="customerSplit" type="range" min="15" max="100" step="1" value="50"></label>
           <label>Manual % <input id="customerSplitNumber" type="number" min="15" max="100" value="50"></label>
@@ -641,7 +642,7 @@
       </div>
       <div class="card metric span-4"><span>Customer split earnings during Phase 1</span><b id="customerPhase1">$0</b></div>
       <div class="card metric span-4"><span>Customer split earnings during Phase 2</span><b id="customerPhase2">$0</b></div>
-      <div class="card metric span-3"><span>Total customer service revenue</span><b id="customerGross">$0</b></div>
+      <div class="card metric span-3"><span>Modeled customer service revenue</span><b id="customerGross">$0</b></div>
       <div class="card metric span-3"><span>Zah customer-service share</span><b id="customerZah">$0</b></div>
       <div class="card metric span-3"><span>Work @ Wheel customer-service share</span><b id="customerWork">$0</b></div>
       <div class="card metric span-3"><span>Monthly projected Zah earnings</span><b id="customerMonthly">$0</b></div>
@@ -653,6 +654,7 @@
           <label>Months projected <input id="podcastMonths" type="number" value="6" min="1" max="12"></label>
           <label>Accept podcast split during retainer? <select id="podcastPhase1Split"><option value="no">No, Phase 2 only</option><option value="yes">Yes, during Phase 1 too</option></select></label>
         </div>
+        <p class="note" style="margin-top: 12px;">If set to "No," projected podcast months are modeled after the retainer. If set to "Yes," those projected months are also counted during Phase 1.</p>
         <div class="split-control" style="margin-top: 14px;">
           <label>Zah Brand Solutions Share <input id="podcastSplit" type="range" min="15" max="100" step="1" value="25"></label>
           <label>Manual % <input id="podcastSplitNumber" type="number" min="15" max="100" value="25"></label>
@@ -667,7 +669,7 @@
       <div class="card metric span-3"><span>Podcast split earnings during Phase 1</span><b id="podcastPhase1">$0</b></div>
       <div class="card metric span-3"><span>Podcast split earnings during Phase 2</span><b id="podcastPhase2">$0</b></div>
       <div class="card metric span-6"><span>Work @ Wheel podcast revenue after Zah share</span><b id="podcastWork">$0</b></div>
-      <div class="card metric span-6"><span>Total podcast/studio revenue</span><b id="podcastGross">$0</b></div>
+      <div class="card metric span-6"><span>Modeled podcast/studio revenue</span><b id="podcastGross">$0</b></div>
     </section>
 
     <section class="section grid page-panel hidden" id="scenariosPage">
@@ -805,25 +807,30 @@
       const direct = directTotals();
       const directAnnual = direct.phase1 + direct.phase2;
 
-      const customerGross = Number($("customerRevenue").value);
+      const customerBaseGross = Number($("customerRevenue").value);
       const customerMonths = Number($("customerMonths").value);
       const customerSplit = clampPercent($("customerSplit").value) / 100;
+      const customerGrossMonthly = customerMonths ? customerBaseGross / customerMonths : 0;
+      const customerPhase1Months = $("customerPhase1Split").value === "yes" ? Math.min(6, customerMonths) : 0;
+      const customerPhase2Months = Math.min(6, customerMonths);
+      const customerPhase1Gross = customerGrossMonthly * customerPhase1Months;
+      const customerPhase2Gross = customerGrossMonthly * customerPhase2Months;
+      const customerGross = customerPhase1Gross + customerPhase2Gross;
       const customerZah = customerGross * customerSplit;
       const customerWork = customerGross - customerZah;
-      const customerMonthly = customerMonths ? customerZah / customerMonths : 0;
-      const customerPhase1Months = $("customerPhase1Split").value === "yes" ? Math.min(6, customerMonths) : 0;
-      const customerPhase2Months = Math.min(6, Math.max(0, customerMonths - customerPhase1Months));
-      const customerPhase1Zah = customerMonthly * customerPhase1Months;
-      const customerPhase2Zah = customerMonthly * customerPhase2Months;
+      const customerMonthly = customerGrossMonthly * customerSplit;
+      const customerPhase1Zah = customerPhase1Gross * customerSplit;
+      const customerPhase2Zah = customerPhase2Gross * customerSplit;
 
-      const podcastGross = Number($("podcastRevenue").value) * Number($("podcastMonths").value);
+      const podcastMonthlyGross = Number($("podcastRevenue").value);
       const podcastSplit = clampPercent($("podcastSplit").value) / 100;
-      const podcastZah = podcastGross * podcastSplit;
-      const podcastWork = podcastGross - podcastZah;
-      const podcastZahMonthly = Number($("podcastRevenue").value) * podcastSplit;
       const podcastMonths = Number($("podcastMonths").value);
       const podcastPhase1Months = $("podcastPhase1Split").value === "yes" ? Math.min(6, podcastMonths) : 0;
-      const podcastPhase2Months = Math.min(6, Math.max(0, podcastMonths - podcastPhase1Months));
+      const podcastPhase2Months = Math.min(6, podcastMonths);
+      const podcastGross = podcastMonthlyGross * (podcastPhase1Months + podcastPhase2Months);
+      const podcastZah = podcastGross * podcastSplit;
+      const podcastWork = podcastGross - podcastZah;
+      const podcastZahMonthly = podcastMonthlyGross * podcastSplit;
       const podcastPhase1Zah = podcastZahMonthly * podcastPhase1Months;
       const podcastPhase2Zah = podcastZahMonthly * podcastPhase2Months;
 
